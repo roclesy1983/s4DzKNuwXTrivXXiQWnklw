@@ -44,7 +44,9 @@ import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedExcep
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
+import org.broadleafcommerce.core.order.dao.DiscreteOrderItemDao;
 import org.broadleafcommerce.core.order.dao.OrderDao;
+import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
@@ -99,6 +101,9 @@ public class OrderServiceImpl implements OrderService {
     
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
+    
+    @Resource(name = "blDiscreteOrderItemDao")
+    protected DiscreteOrderItemDao discreteOrderItemDao;
     
     @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
@@ -224,6 +229,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findOrderByOrderNumber(String orderNumber) {
         return orderDao.readOrderByOrderNumber(orderNumber);
+    }
+    
+    @Override
+    public List<Order> findOrdersByProductId(Long productId) {
+    	List<DiscreteOrderItem> discreteOrderItems= discreteOrderItemDao.readDiscreteOrderItemsByProductId(productId);
+    	List<Order> orders = new ArrayList<Order>();
+    	for(DiscreteOrderItem item : discreteOrderItems){
+    		orders.add(item.getOrder());
+    	}
+        return orders;
     }
 
     @Override

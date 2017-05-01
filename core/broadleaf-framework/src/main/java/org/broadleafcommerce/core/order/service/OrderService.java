@@ -149,6 +149,14 @@ public interface OrderService {
     public Order findOrderByOrderNumber(String orderNumber);
     
     /**
+     * Looks up Orders and returns the order matching the given productId
+     * 
+     * @param productId
+     * @return the requested Order
+     */
+    public List<Order> findOrdersByProductId(Long productId);
+    
+    /**
      * Returns all OrderPayment objects that are associated with the given order
      * 
      * @param order

@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -237,6 +238,8 @@ public interface CatalogService {
     public ProductOption findProductOptionById(Long productOptionId);
     
     public ProductOptionValue findProductOptionValueById(Long productOptionValueId);
+    
+    public ProductAttribute findProductAttributeByValue(String value);
     
     /**
      * Returns a category associated with the passed in URI or null if no Category is

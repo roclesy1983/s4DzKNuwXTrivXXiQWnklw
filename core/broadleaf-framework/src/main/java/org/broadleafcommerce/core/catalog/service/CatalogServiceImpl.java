@@ -22,11 +22,13 @@ package org.broadleafcommerce.core.catalog.service;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
+import org.broadleafcommerce.core.catalog.dao.ProductAttributeDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductBundleComparator;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -60,6 +62,9 @@ public class CatalogServiceImpl implements CatalogService {
     
     @Resource(name="blProductOptionDao")
     protected ProductOptionDao productOptionDao;
+    
+    @Resource(name="blProductAttributeDao")
+    protected ProductAttributeDao productAttributeDao;
 
     @Resource(name = "blCatalogServiceExtensionManager")
     protected CatalogServiceExtensionManager extensionManager;
@@ -339,6 +344,11 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public ProductOptionValue findProductOptionValueById(Long productOptionValueId) {
         return productOptionDao.readProductOptionValueById(productOptionValueId);
+    }
+    
+    @Override
+    public ProductAttribute findProductAttributeByValue(String value) {
+        return productAttributeDao.readProductAttributeByValue(value);
     }
 
     @Override

@@ -28,12 +28,14 @@
         <mapping-file>config/bc/jpa/domain/CategoryXref.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Product.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ProductOption.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ProductAttribute.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Sku.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Availability.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ShippingRate.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/CodeType.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Order.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/OrderItem.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/DiscreteOrderItem.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/OrderMultishipOption.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/OrderPayment.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Offer.orm.xml</mapping-file>
@@ -57,6 +59,7 @@
         <class>org.broadleafcommerce.core.catalog.domain.ProductBundleImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
@@ -105,6 +108,7 @@
         <class>org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl</class>
         <class>org.broadleafcommerce.core.order.domain.BundleOrderItemFeePriceImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl</class>
         <class>org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl</class>
         <class>org.broadleafcommerce.core.order.domain.PersonalMessageImpl</class>
         <class>org.broadleafcommerce.core.order.domain.TaxDetailImpl</class>
