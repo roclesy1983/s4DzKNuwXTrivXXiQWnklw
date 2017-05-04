@@ -37,11 +37,13 @@ import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.dao.CustomerForgotPasswordSecurityTokenDao;
 import org.broadleafcommerce.profile.core.dao.RoleDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
 import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken;
 import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityTokenImpl;
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.CustomerRoleImpl;
 import org.broadleafcommerce.profile.core.domain.Role;
+import org.broadleafcommerce.profile.core.domain.RoleImpl;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -215,7 +217,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void createRegisteredCustomerRoles(Customer customer) {
-        Role role = roleDao.readRoleByName("ROLE_USER");
+    	Role role = new RoleImpl();
+    	if (customer.getCustomerAttributes() == null || customer.getCustomerAttributes().size() == 0) {
+    		role = roleDao.readRoleByName("ROLE_DOCTOR");
+    	} else {
+    		role = roleDao.readRoleByName("ROLE_USER");
+    	}
         CustomerRole customerRole = new CustomerRoleImpl();
         customerRole.setRole(role);
         customerRole.setCustomer(customer);

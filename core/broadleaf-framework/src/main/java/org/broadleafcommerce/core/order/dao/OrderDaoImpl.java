@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.type.ServiceStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
@@ -242,6 +243,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order submitOrder(final Order cartOrder) {
         cartOrder.setStatus(OrderStatus.SUBMITTED);
+        cartOrder.setServiceStatus(ServiceStatus.NEW);
         return save(cartOrder);
     }
 

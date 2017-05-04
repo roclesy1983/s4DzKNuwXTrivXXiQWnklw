@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.type.ServiceStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
@@ -130,6 +131,16 @@ public class NullOrderImpl implements Order {
 
     @Override
     public void setStatus(OrderStatus status) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+    
+    @Override
+    public ServiceStatus getServiceStatus() {
+        return null;
+    }
+
+    @Override
+    public void setServiceStatus(ServiceStatus serviceStatus) {
         throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 

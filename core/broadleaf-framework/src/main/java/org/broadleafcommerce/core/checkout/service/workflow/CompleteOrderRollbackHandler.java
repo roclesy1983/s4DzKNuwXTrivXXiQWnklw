@@ -45,6 +45,7 @@ public class CompleteOrderRollbackHandler implements RollbackHandler<CheckoutSee
     public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         CheckoutSeed seed = processContext.getSeedData();
         seed.getOrder().setStatus(OrderStatus.IN_PROCESS);
+        seed.getOrder().setServiceStatus(null);
         seed.getOrder().setOrderNumber(null);
         seed.getOrder().setSubmitDate(null);
     }

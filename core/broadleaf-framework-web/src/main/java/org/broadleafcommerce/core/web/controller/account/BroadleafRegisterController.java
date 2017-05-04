@@ -29,6 +29,8 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
+import org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -37,6 +39,9 @@ import org.broadleafcommerce.profile.web.core.service.login.LoginService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -95,13 +100,21 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
         
         registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
         if (!errors.hasErrors()) {
-            Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(), 
+        	Customer customer = registerCustomerForm.getCustomer();
+        	Map<String, CustomerAttribute> customerAttributes = new HashMap<String, CustomerAttribute>();
+        	CustomerAttribute customerAttribute = new CustomerAttributeImpl();
+        	customerAttribute.setCustomer(customer);
+        	customerAttribute.setName("Authority");
+        	customerAttribute.setValue("User");
+        	customerAttributes.put("Authority", customerAttribute);
+        	customer.setCustomerAttributes(customerAttributes);
+            Customer newCustomer = customerService.registerCustomer(customer, 
                     registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
             assert(newCustomer != null);
             
             // The next line needs to use the customer from the input form and not the customer returned after registration
             // so that we still have the unencoded password for use by the authentication mechanism.
-            loginService.loginCustomer(registerCustomerForm.getCustomer());
+            loginService.loginCustomer(customer);
 
             // Need to ensure that the Cart on CartState is owned by the newly registered customer.
             Order cart = CartState.getCart();

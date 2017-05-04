@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.type.ServiceStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity;
 import org.broadleafcommerce.core.pricing.service.workflow.TotalActivity;
@@ -184,6 +185,20 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * @param status
      */
     void setStatus(OrderStatus status);
+
+    /**
+     * Gets the service status of the Order.
+     * 
+     * @return
+     */
+    ServiceStatus getServiceStatus();
+
+    /**
+     * Sets the service status of the Order
+     * 
+     * @param serviceStatus
+     */
+    void setServiceStatus(ServiceStatus serviceStatus);
 
     /**
      * Gets all the {@link OrderItem}s included in this {@link Order}

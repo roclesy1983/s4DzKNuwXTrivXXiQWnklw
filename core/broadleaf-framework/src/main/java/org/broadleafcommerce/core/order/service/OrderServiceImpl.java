@@ -64,6 +64,7 @@ import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.type.ServiceStatus;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -365,6 +366,14 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(Order order) {
         orderDao.delete(order);
     }
+    
+    @Override
+    @Transactional("blTransactionManager")
+    public Order cancelOrderByDoctor(Order order) {
+    	order.setStatus(OrderStatus.CANCELLED);
+    	order.setServiceStatus(ServiceStatus.CANCELLED);
+        return orderDao.save(order);
+    }
 
     @Override
     @Transactional("blTransactionManager")
@@ -457,6 +466,14 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return null;
+    }
+   
+    @Override
+    @Transactional("blTransactionManager")
+    public Order completeOrder(Order order) {
+    	order.setStatus(OrderStatus.SUBMITTED);
+    	order.setServiceStatus(ServiceStatus.COMPLETED);
+        return orderDao.save(order);
     }
     
     @Override

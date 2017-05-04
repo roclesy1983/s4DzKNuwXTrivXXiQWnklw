@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.event.OrderSubmittedEvent;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.type.ServiceStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.BeansException;
@@ -47,6 +48,7 @@ public class CompleteOrderActivity extends BaseActivity<ProcessContext<CheckoutS
         CheckoutSeed seed = context.getSeedData();
 
         seed.getOrder().setStatus(getCompletedStatus());
+        seed.getOrder().setServiceStatus(ServiceStatus.NEW);
         seed.getOrder().setOrderNumber(determineOrderNumber(seed.getOrder()));
         seed.getOrder().setSubmitDate(determineSubmitDate(seed.getOrder()));
 

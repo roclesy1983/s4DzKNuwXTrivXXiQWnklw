@@ -61,6 +61,7 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.type.ServiceStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -163,6 +164,14 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus",
             groupOrder = Presentation.Group.Order.General, gridOrder = 3000)
     protected String status;
+    
+    @Column(name = "SERVICE_STATUS")
+    @Index(name="SERVICE_STATUS_INDEX", columnNames={"SERVICE_STATUS"})
+    @AdminPresentation(friendlyName = "OrderImpl_Service_Status", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.STATUS, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.order.service.type.ServiceStatus",
+            groupOrder = Presentation.Group.Order.General, gridOrder = 3000)
+    protected String serviceStatus;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Tax", group = Presentation.Group.Name.General,
@@ -403,6 +412,16 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public void setStatus(OrderStatus status) {
         this.status = status.getType();
+    }
+    
+    @Override
+    public ServiceStatus getServiceStatus() {
+        return ServiceStatus.getInstance(serviceStatus);
+    }
+
+    @Override
+    public void setServiceStatus(ServiceStatus serviceStatus) {
+        this.serviceStatus = serviceStatus.getType();
     }
 
     @Override

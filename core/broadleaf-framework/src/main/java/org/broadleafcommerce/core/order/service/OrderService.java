@@ -213,6 +213,14 @@ public interface OrderService {
     public void cancelOrder(Order order);
     
     /**
+     * Deletes the given order. Note that the default Broadleaf implementation in 
+     * OrderServiceImpl will actually remove the Order instance from the database.
+     * 
+     * @param order
+     */
+    public Order cancelOrderByDoctor(Order order);
+    
+    /**
      * Adds the given OfferCode to the order. Optionally prices the order as well.
      * 
      * @param order
@@ -289,7 +297,15 @@ public interface OrderService {
      * @param automaticallyMergeLikeItems
      */
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
-    
+
+    /**
+     * Changes the OrderStatus to SUBMITTED
+     * 
+     * @param order to confirm
+     * @return the order that was confirmed
+     */
+    public Order completeOrder(Order order);
+
     /**
      * Changes the OrderStatus to SUBMITTED
      * 
