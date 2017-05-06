@@ -70,6 +70,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getRoleName()));
             if (role.getRoleName().equals("ROLE_USER")) {
                 roleUserFound = true;
+            } else if(role.getRoleName().equals("ROLE_DOCTOR")) {
+            	roleUserFound = true;
             }
         }
 
