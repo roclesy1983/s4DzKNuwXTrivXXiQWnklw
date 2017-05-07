@@ -150,8 +150,13 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", order = 3000,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected Boolean deactivated = false;
+    
+    @Column(name = "IS_PREPROD")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Preprod", order = 3000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
+    protected Boolean preprod = false;
 
-    @ManyToOne(targetEntity = LocaleImpl.class)
+	@ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale", order = 4000,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
@@ -337,6 +342,16 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     public void setRegistered(boolean registered) {
         this.registered = Boolean.valueOf(registered);
     }
+
+    @Override
+    public boolean isPreprod() {
+		return BooleanUtils.toBoolean(preprod);
+	}
+
+    @Override
+	public void setPreprod(boolean preprod) {
+		this.preprod = Boolean.valueOf(preprod);
+	}
 
     @Override
     public String getUnencodedChallengeAnswer() {

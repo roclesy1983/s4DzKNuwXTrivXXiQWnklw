@@ -51,7 +51,7 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
             throw new IllegalArgumentException("The orderNumber provided is not valid");
         }
 
-        validateCustomerOwnedData(order);
+        validateCustomerOwnedData(order, request);
 
         model.addAttribute("order", order);
         return isAjaxRequest(request) ? getOrderDetailsView() : getOrderDetailsRedirectView();
@@ -69,10 +69,10 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
         return orderDetailsRedirectView;
     }
 
-    protected void validateCustomerOwnedData(Order order) {
+    protected void validateCustomerOwnedData(Order order, HttpServletRequest request) {
         if (validateCustomerOwnedData) {
             Customer activeCustomer = CustomerState.getCustomer();
-            if (activeCustomer != null && !(activeCustomer.equals(order.getCustomer()))) {
+            if (activeCustomer != null && request.isUserInRole("ROLE_USER") && !(activeCustomer.equals(order.getCustomer()))) {
                 throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
             } else if (activeCustomer == null && order.getCustomer() != null) {
                 throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");

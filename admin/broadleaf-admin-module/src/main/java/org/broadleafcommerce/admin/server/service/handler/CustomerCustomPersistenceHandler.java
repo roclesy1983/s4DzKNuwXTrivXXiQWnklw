@@ -96,17 +96,9 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             if (errorEntity != null) {
                 return errorEntity;
             }
-            
-			Map<String, CustomerAttribute> customerAttributes = new HashMap<String, CustomerAttribute>();
-			CustomerAttribute customerAttribute = new CustomerAttributeImpl();
-			customerAttribute.setCustomer(adminInstance);
-			customerAttribute.setName("Authority");
-			customerAttribute.setValue("Doctor");
-			customerAttributes.put("Authority", customerAttribute);
-			adminInstance.setCustomerAttributes(customerAttributes);
 
             adminInstance = dynamicEntityDao.merge(adminInstance);
-            customerService.createRegisteredCustomerRoles(adminInstance);
+            customerService.createRegisteredCustomerRoles(adminInstance, "ROLE_DOCTOR");
 
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 

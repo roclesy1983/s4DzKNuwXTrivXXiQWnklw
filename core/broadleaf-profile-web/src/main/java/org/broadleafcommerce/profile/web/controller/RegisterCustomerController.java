@@ -84,14 +84,7 @@ public class RegisterCustomerController {
         registerCustomerValidator.validate(registerCustomerForm, errors);
         if (! errors.hasErrors()) {
         	Customer customer = registerCustomerForm.getCustomer();
-        	Map<String, CustomerAttribute> customerAttributes = new HashMap<String, CustomerAttribute>();
-        	CustomerAttribute customerAttribute = new CustomerAttributeImpl();
-        	customerAttribute.setCustomer(customer);
-        	customerAttribute.setName("Authority");
-        	customerAttribute.setValue("User");
-        	customerAttributes.put("Authority", customerAttribute);
-        	customer.setCustomerAttributes(customerAttributes);
-            customerService.registerCustomer(customer, registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
+            customerService.registerCustomer(customer, registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm(), "ROLE_USER");
             loginService.loginCustomer(customer);
             return new ModelAndView(getRegistrationSuccessView());
         } else {

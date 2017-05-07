@@ -35,7 +35,7 @@ public interface CustomerService {
 
     public Customer saveCustomer(Customer customer, boolean register);
 
-    public Customer registerCustomer(Customer customer, String password, String passwordConfirm);
+    public Customer registerCustomer(Customer customer, String password, String passwordConfirm, String roleName);
 
     public Customer readCustomerByUsername(String customerName);
 
@@ -72,8 +72,9 @@ public interface CustomerService {
      * Subclassed implementations can assign unique roles for various customer types
      * 
      * @param customer {@link Customer} to create roles for
+     * @param roleName TODO
      */
-    public void createRegisteredCustomerRoles(Customer customer);
+    public void createRegisteredCustomerRoles(Customer customer, String roleName);
 
     public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners);
 

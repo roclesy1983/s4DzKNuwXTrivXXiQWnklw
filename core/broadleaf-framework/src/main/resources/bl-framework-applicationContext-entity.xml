@@ -54,6 +54,7 @@
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductAttribute" class="org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductBundle" class="org.broadleafcommerce.core.catalog.domain.ProductBundleImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductOption" class="org.broadleafcommerce.core.catalog.domain.ProductOptionImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.core.catalog.domain.ProductCustomerXref" class="org.broadleafcommerce.core.catalog.domain.ProductCustomerXrefImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductOptionValue" class="org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.SkuBundleItem" class="org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.Sku" class="org.broadleafcommerce.core.catalog.domain.SkuImpl" scope="prototype"/>

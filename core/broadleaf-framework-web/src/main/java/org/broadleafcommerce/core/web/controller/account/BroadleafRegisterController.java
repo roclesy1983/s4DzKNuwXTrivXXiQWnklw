@@ -98,19 +98,11 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
             customer.setUsername(customer.getEmailAddress());
         }
         
-        registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
-        if (!errors.hasErrors()) {
-        	Customer customer = registerCustomerForm.getCustomer();
-        	Map<String, CustomerAttribute> customerAttributes = new HashMap<String, CustomerAttribute>();
-        	CustomerAttribute customerAttribute = new CustomerAttributeImpl();
-        	customerAttribute.setCustomer(customer);
-        	customerAttribute.setName("Authority");
-        	customerAttribute.setValue("User");
-        	customerAttributes.put("Authority", customerAttribute);
-        	customer.setCustomerAttributes(customerAttributes);
-            Customer newCustomer = customerService.registerCustomer(customer, 
-                    registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
-            assert(newCustomer != null);
+		registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
+		if (!errors.hasErrors()) {
+			Customer customer = registerCustomerForm.getCustomer();
+			Customer newCustomer = customerService.registerCustomer(customer, registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm(), "ROLE_USER");
+			assert (newCustomer != null);
             
             // The next line needs to use the customer from the input form and not the customer returned after registration
             // so that we still have the unencoded password for use by the authentication mechanism.

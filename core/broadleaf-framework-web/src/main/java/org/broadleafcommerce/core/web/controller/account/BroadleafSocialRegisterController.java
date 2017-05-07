@@ -79,11 +79,10 @@ public class BroadleafSocialRegisterController extends BroadleafRegisterControll
             customer.setUsername(customer.getEmailAddress());
         }
 
-        registerCustomerValidator.validate(registerCustomerForm, errors, isUseEmailForLogin());
-        if (!errors.hasErrors()) {
-            Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(),
-                    registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
-            assert(newCustomer != null);
+		registerCustomerValidator.validate(registerCustomerForm, errors, isUseEmailForLogin());
+		if (!errors.hasErrors()) {
+			Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(), registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm(), "ROLE_USER");
+			assert (newCustomer != null);
 
             ProviderSignInUtils.handlePostSignUp(newCustomer.getUsername(), new ServletWebRequest(request));
 

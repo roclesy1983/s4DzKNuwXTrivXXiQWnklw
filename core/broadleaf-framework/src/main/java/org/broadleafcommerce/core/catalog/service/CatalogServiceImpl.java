@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.dao.ProductAttributeDao;
+import org.broadleafcommerce.core.catalog.dao.ProductCustomerXrefDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
@@ -31,6 +32,8 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductBundleComparator;
+import org.broadleafcommerce.core.catalog.domain.ProductCustomerXref;
+import org.broadleafcommerce.core.catalog.domain.ProductCustomerXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -38,6 +41,8 @@ import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.service.IdGenerationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +67,12 @@ public class CatalogServiceImpl implements CatalogService {
     
     @Resource(name="blProductOptionDao")
     protected ProductOptionDao productOptionDao;
+    
+    @Resource(name="blProductCustomerXrefDao")
+    protected ProductCustomerXrefDao productCustomerXrefDao;
+    
+    @Resource(name="blIdGenerationService")
+    protected IdGenerationService idGenerationService;
     
     @Resource(name="blProductAttributeDao")
     protected ProductAttributeDao productAttributeDao;
@@ -329,14 +340,26 @@ public class CatalogServiceImpl implements CatalogService {
     public List<ProductOption> readAllProductOptions() {
         return productOptionDao.readAllProductOptions();
     }
-    
-    @Override
-    @Transactional("blTransactionManager")
-    public ProductOption saveProductOption(ProductOption option) {
-        return productOptionDao.saveProductOption(option);
-    }
-    
-    @Override
+
+	@Override
+	@Transactional("blTransactionManager")
+	public ProductOption saveProductOption(ProductOption option) {
+		return productOptionDao.saveProductOption(option);
+	}
+
+	public Product readProductByCustomerId(Long customerId) {
+		return productCustomerXrefDao.readProductByCustomerId(customerId);
+	}
+
+	public ProductCustomerXref saveProductCustomerXref(Product product, Customer customer) {
+		ProductCustomerXref productCustomerXref = new ProductCustomerXrefImpl();
+		productCustomerXref.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.core.domain.Customer"));
+		productCustomerXref.setProduct(product);
+		productCustomerXref.setCustomer(customer);
+		return productCustomerXrefDao.saveProductCustomerXref(productCustomerXref);
+	}
+
+	@Override
     public ProductOption findProductOptionById(Long productOptionId) {
         return productOptionDao.readProductOptionById(productOptionId);
     }

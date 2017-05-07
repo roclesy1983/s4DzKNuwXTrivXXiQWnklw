@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductCustomerXref;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -30,6 +31,7 @@ import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.Date;
 import java.util.List;
@@ -236,6 +238,10 @@ public interface CatalogService {
     public ProductOption saveProductOption(ProductOption option);
     
     public ProductOption findProductOptionById(Long productOptionId);
+    
+    public Product readProductByCustomerId(Long customerId);
+    
+    public ProductCustomerXref saveProductCustomerXref(Product product, Customer customer);
     
     public ProductOptionValue findProductOptionValueById(Long productOptionValueId);
     

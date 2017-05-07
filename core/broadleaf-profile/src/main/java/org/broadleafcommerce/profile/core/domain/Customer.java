@@ -76,6 +76,10 @@ public interface Customer extends Serializable, MultiTenantCloneable<Customer> {
     public boolean isRegistered();
 
     public void setRegistered(boolean registered);
+    
+    public boolean isPreprod();
+
+	public void setPreprod(boolean preprod);
 
     public String getUnencodedChallengeAnswer();
 

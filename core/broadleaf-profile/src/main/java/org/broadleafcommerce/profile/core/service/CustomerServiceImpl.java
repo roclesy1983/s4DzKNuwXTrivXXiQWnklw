@@ -60,6 +60,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -196,7 +197,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
-    public Customer registerCustomer(Customer customer, String password, String passwordConfirm) {
+    public Customer registerCustomer(Customer customer, String password, String passwordConfirm, String roleName) {
         customer.setRegistered(true);
 
         // When unencodedPassword is set the save() will encode it
@@ -205,7 +206,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         customer.setUnencodedPassword(password);
         Customer retCustomer = saveCustomer(customer);
-        createRegisteredCustomerRoles(retCustomer);
+        createRegisteredCustomerRoles(retCustomer, roleName);
         
         HashMap<String, Object> vars = new HashMap<String, Object>();
         vars.put("customer", retCustomer);
@@ -216,13 +217,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void createRegisteredCustomerRoles(Customer customer) {
+    public void createRegisteredCustomerRoles(Customer customer, String roleName) {
     	Role role = new RoleImpl();
-    	if (customer.getCustomerAttributes() == null || customer.getCustomerAttributes().size() == 0) {
-    		role = roleDao.readRoleByName("ROLE_DOCTOR");
-    	} else {
-    		role = roleDao.readRoleByName("ROLE_USER");
-    	}
+
+    	role = roleDao.readRoleByName(roleName);
         CustomerRole customerRole = new CustomerRoleImpl();
         customerRole.setRole(role);
         customerRole.setCustomer(customer);
