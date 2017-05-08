@@ -29,6 +29,7 @@ import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -55,7 +56,7 @@ public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefiniti
     @Override
     protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
         initServices(arguments);
-        HashMap<String, String> productOptionDisplayValues = new HashMap<String, String>();
+        HashMap<String, String> productOptionDisplayValues = new LinkedHashMap<String, String>();
         Map<String, Object> newVars = new HashMap<String, Object>();
         Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
                 .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("orderItem"));
