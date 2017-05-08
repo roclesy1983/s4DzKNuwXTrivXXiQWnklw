@@ -63,14 +63,15 @@ public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefiniti
         if (item instanceof DiscreteOrderItem) {
             DiscreteOrderItem orderItem = (DiscreteOrderItem) item;
 
-            for (String i : orderItem.getOrderItemAttributes().keySet()) {
-                for (ProductOption option : orderItem.getProduct().getProductOptions()) {
-                    if (option.getAttributeName().equals(i) && !StringUtils.isEmpty(orderItem.getOrderItemAttributes().get(i).toString())) {
-                        productOptionDisplayValues.put(option.getLabel(), orderItem.getOrderItemAttributes().get(i).toString());
-                    }
-                }
-            }
-        }
+			for (ProductOption option : orderItem.getProduct().getProductOptions()) {
+				for (String i : orderItem.getOrderItemAttributes().keySet()) {
+					if (option.getAttributeName().equals(i) && !StringUtils.isEmpty(orderItem.getOrderItemAttributes().get(i).toString())) {
+						productOptionDisplayValues.put(option.getLabel(), orderItem.getOrderItemAttributes().get(i).toString());
+						break;
+					}
+				}
+			}
+		}
         newVars.put("productOptionDisplayValues", productOptionDisplayValues);
 
         return newVars;
