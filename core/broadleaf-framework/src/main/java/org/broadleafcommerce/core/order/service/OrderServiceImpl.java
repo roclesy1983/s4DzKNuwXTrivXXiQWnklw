@@ -234,12 +234,14 @@ public class OrderServiceImpl implements OrderService {
     
     @Override
     public List<Order> findOrdersByProductId(Long productId) {
-    	List<DiscreteOrderItem> discreteOrderItems= discreteOrderItemDao.readDiscreteOrderItemsByProductId(productId);
-    	List<Order> orders = new ArrayList<Order>();
-    	for(DiscreteOrderItem item : discreteOrderItems){
-    		orders.add(item.getOrder());
-    	}
-        return orders;
+		List<DiscreteOrderItem> discreteOrderItems = discreteOrderItemDao.readDiscreteOrderItemsByProductId(productId);
+		List<Order> orders = new ArrayList<Order>();
+		for (DiscreteOrderItem item : discreteOrderItems) {
+			if (item.getOrder().getSubmitDate() != null) {
+				orders.add(item.getOrder());
+			}
+		}
+		return orders;
     }
 
     @Override
