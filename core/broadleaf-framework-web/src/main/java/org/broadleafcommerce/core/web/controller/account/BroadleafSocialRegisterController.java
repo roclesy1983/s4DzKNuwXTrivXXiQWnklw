@@ -19,6 +19,10 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
@@ -28,14 +32,12 @@ import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
 import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.UserProfile;
 import org.springframework.social.connect.web.ProviderSignInUtils;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.User;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.ServletWebRequest;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is an extension of BroadleafRegisterController
@@ -49,23 +51,28 @@ import javax.servlet.http.HttpServletResponse;
  *
  */
 public class BroadleafSocialRegisterController extends BroadleafRegisterController {
+	
+	@Resource(name = "blSignInUtils")
+	private ProviderSignInUtils providerSignInUtils;
 
-    //Pre-populate portions of the RegisterCustomerForm from ProviderSignInUtils.getConnection();
-    public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request,
-                           HttpServletResponse response, Model model) {
-        Connection<?> connection = ProviderSignInUtils.getConnection(new ServletWebRequest(request));
-        if (connection != null) {
-            UserProfile userProfile = connection.fetchUserProfile();
-            Customer customer = registerCustomerForm.getCustomer();
-            customer.setFirstName(userProfile.getFirstName());
-            customer.setLastName(userProfile.getLastName());
-            customer.setEmailAddress(userProfile.getEmail());
-            if (isUseEmailForLogin()){
-                customer.setUsername(userProfile.getEmail());
-            } else {
-                customer.setUsername(userProfile.getUsername());
-            }
-        }
+	// Pre-populate portions of the RegisterCustomerForm from
+	// ProviderSignInUtils.getConnection();
+	public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
+		if (connection != null) {
+			Facebook facebook = (Facebook) connection.getApi();
+			String[] fields = { "id", "email", "first_name", "last_name" };
+			User userProfile = facebook.fetchObject("me", User.class, fields);
+			Customer customer = registerCustomerForm.getCustomer();
+			customer.setFirstName(userProfile.getFirstName());
+			customer.setLastName(userProfile.getLastName());
+			customer.setEmailAddress(userProfile.getEmail());
+			if (isUseEmailForLogin()) {
+				customer.setUsername(userProfile.getEmail());
+			} else {
+				customer.setUsername(userProfile.getName());
+			}
+		}
 
         return super.register(registerCustomerForm, request, response, model);
     }
@@ -76,15 +83,15 @@ public class BroadleafSocialRegisterController extends BroadleafRegisterControll
             throws ServiceException, PricingException {
         if (isUseEmailForLogin()) {
             Customer customer = registerCustomerForm.getCustomer();
-            customer.setUsername(customer.getEmailAddress());
-        }
+			customer.setUsername(customer.getEmailAddress());
+		}
 
 		registerCustomerValidator.validate(registerCustomerForm, errors, isUseEmailForLogin());
 		if (!errors.hasErrors()) {
 			Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(), registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm(), "ROLE_USER");
 			assert (newCustomer != null);
 
-            ProviderSignInUtils.handlePostSignUp(newCustomer.getUsername(), new ServletWebRequest(request));
+			providerSignInUtils.doPostSignUp(newCustomer.getUsername(), new ServletWebRequest(request));
 
             // The next line needs to use the customer from the input form and not the customer returned after registration
             // so that we still have the unencoded password for use by the authentication mechanism.
