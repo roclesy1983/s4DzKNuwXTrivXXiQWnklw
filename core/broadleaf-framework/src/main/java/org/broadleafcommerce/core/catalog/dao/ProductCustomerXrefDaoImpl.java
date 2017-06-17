@@ -19,53 +19,43 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
-import org.broadleafcommerce.core.catalog.domain.ProductCustomerXref;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
-import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl;
-import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
-import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductCustomerXref;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.stereotype.Repository;
+import org.broadleafcommerce.core.order.domain.Order;
 
 @Repository("blProductCustomerXrefDao")
 public class ProductCustomerXrefDaoImpl implements ProductCustomerXrefDao {
-    
-    @PersistenceContext(unitName="blPU")
-    protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
+	@PersistenceContext(unitName = "blPU")
+	protected EntityManager em;
 
-    public ProductCustomerXref saveProductCustomerXref(ProductCustomerXref productCustomerXref) {
-        return em.merge(productCustomerXref);
-    }
+	@Resource(name = "blEntityConfiguration")
+	protected EntityConfiguration entityConfiguration;
 
-    @Override
-    public Product readProductByCustomerId(Long customerId) {
-    	Product result = null;
-    	Query query = em.createNamedQuery("BC_READ_PRODUCT_CUSTOMER_XREF_BY_CUSTOMERID");
-        query.setParameter("customerId", customerId);
-        result = ((ProductCustomerXref)query.getResultList().get(0)).getProduct();
-        return result;
-    }
+	public ProductCustomerXref saveProductCustomerXref(ProductCustomerXref productCustomerXref) {
+		return em.merge(productCustomerXref);
+	}
+
+	@Override
+	public Product readProductByCustomerId(Long customerId) {
+		Query query = em.createNamedQuery("BC_READ_PRODUCT_CUSTOMER_XREF_BY_CUSTOMERID");
+		query.setParameter("customerId", customerId);
+		return ((ProductCustomerXref) query.getResultList().get(0)).getProduct();
+	}
+
+	@Override
+	public Customer readCustomerByOrder(Order order) {
+		Query query = em.createNamedQuery("BC_READ_CUSTOMERS_XREF_BY_ORDER_NUMBER");
+		query.setParameter("order", order);
+		return ((ProductCustomerXref) query.getResultList().get(0)).getCustomer();
+	}
 
 }

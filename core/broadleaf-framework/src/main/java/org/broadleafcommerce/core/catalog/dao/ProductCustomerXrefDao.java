@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductCustomerXref;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.profile.core.domain.Customer;
 
 /**
  * 
@@ -28,9 +30,11 @@ import org.broadleafcommerce.core.catalog.domain.ProductCustomerXref;
  *
  */
 public interface ProductCustomerXrefDao {
-    
-    public Product readProductByCustomerId(Long customerId);
-    
-    public ProductCustomerXref saveProductCustomerXref(ProductCustomerXref productCustomerXref);
+
+	public Product readProductByCustomerId(Long customerId);
+
+	public Customer readCustomerByOrder(Order order);
+
+	public ProductCustomerXref saveProductCustomerXref(ProductCustomerXref productCustomerXref);
 
 }
