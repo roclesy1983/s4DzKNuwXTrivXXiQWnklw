@@ -289,7 +289,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         boolean showPaymentMethodSection = true;
 
         int numShippableFulfillmentGroups = calculateNumShippableFulfillmentGroups();
-        if (numShippableFulfillmentGroups == 0) {
+        if (numShippableFulfillmentGroups == 0 || CartState.getCart().getDiscreteOrderItems().get(0).getProduct().getIsService()) {
             showShippingInfoSection = false;
         }
 

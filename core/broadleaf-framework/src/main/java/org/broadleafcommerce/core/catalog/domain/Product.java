@@ -228,6 +228,10 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      */
     public void setCanSellWithoutOptions(Boolean canSellWithoutOptions);
 
+    public Boolean getIsService();
+    
+	public void setIsService(Boolean isService);
+	
     /**
      * Returns a list of {@link Sku}s filtered by whether the Skus are active or not.
      * This list does not contain the {@link #getDefaultSku()} and filters by {@link Sku#isActive()}.

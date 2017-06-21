@@ -221,6 +221,12 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected Boolean canSellWithoutOptions = false;
+    
+    @Column(name = "IS_SERVICE")
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Service",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+    protected Boolean isService = false;
 
     @Transient
     protected List<Sku> skus = new ArrayList<Sku>();
@@ -447,6 +453,16 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     }
 
     @Override
+    public Boolean getIsService() {
+		return isService;
+	}
+
+    @Override
+	public void setIsService(Boolean isService) {
+		this.isService = isService;
+	}
+
+	@Override
     public void setDefaultSku(Sku defaultSku) {
         if (defaultSku != null) {
             defaultSku.setDefaultProduct(this);
