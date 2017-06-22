@@ -589,7 +589,11 @@ public class OrderServiceImpl implements OrderService {
         if (automaticallyMergeLikeItems) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
             if (item != null) {
-                orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
+				if (order.getDiscreteOrderItems().get(0).getProduct().getIsService()) {
+					orderItemRequestDTO.setQuantity(item.getQuantity());
+				} else {
+					orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
+				}
                 orderItemRequestDTO.setOrderItemId(item.getId());
                 try {
                     return updateItemQuantity(orderId, orderItemRequestDTO, priceOrder);
@@ -633,13 +637,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
-        preValidateCartOperation(findOrderById(orderId));
-        preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
-        if (orderItemRequestDTO.getQuantity() == 0) {
-            return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
-        }
-        
-        try {
+		Order order = findOrderById(orderId);
+		preValidateCartOperation(order);
+		preValidateUpdateQuantityOperation(order, orderItemRequestDTO);
+		if (orderItemRequestDTO.getQuantity() == 0) {
+			return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);			
+		}
+
+		if (order.getDiscreteOrderItems().get(0).getProduct().getIsService()) {
+	        for(Map.Entry<String,OrderItemAttribute> entry : order.getOrderItems().get(0).getOrderItemAttributes().entrySet()){
+	        	String optionValue = orderItemRequestDTO.getItemAttributes().get(entry.getKey());
+	        	entry.getValue().setValue(optionValue);	            
+	        }
+		}
+
+		try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
             ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
             context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
