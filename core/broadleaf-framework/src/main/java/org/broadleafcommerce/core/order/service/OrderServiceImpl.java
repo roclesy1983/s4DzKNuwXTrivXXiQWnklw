@@ -850,7 +850,7 @@ public class OrderServiceImpl implements OrderService {
         } else {
             if (item1Product != null && item2.getProductId() != null) {
                 if (item1Product.getId().equals(item2.getProductId())) {
-                    return compareAttributes(item1Attributes, item2);
+					return item1Product.getIsService() ? true : compareAttributes(item1Attributes, item2);
                 }
             }
         }
