@@ -589,7 +589,7 @@ public class OrderServiceImpl implements OrderService {
         if (automaticallyMergeLikeItems) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
             if (item != null) {
-				if (order.getDiscreteOrderItems().get(0).getProduct().getIsService()) {
+				if (((DiscreteOrderItem) item).getProduct().getIsService()) {
 					orderItemRequestDTO.setQuantity(item.getQuantity());
 				} else {
 					orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
@@ -644,21 +644,26 @@ public class OrderServiceImpl implements OrderService {
 			return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);			
 		}
 
-		if (order.getDiscreteOrderItems().get(0).getProduct().getIsService()) {
-	        for(Map.Entry<String,OrderItemAttribute> entry : order.getOrderItems().get(0).getOrderItemAttributes().entrySet()){
-	        	String optionValue = orderItemRequestDTO.getItemAttributes().get(entry.getKey());
-	        	entry.getValue().setValue(optionValue);	            
-	        }
+		for (OrderItem currentItem : order.getOrderItems()) {
+			if (currentItem instanceof DiscreteOrderItem) {
+				DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
+				if (discreteItem.getProduct().getIsService()) {
+					for (Map.Entry<String, OrderItemAttribute> entry : discreteItem.getOrderItemAttributes().entrySet()) {
+						String optionValue = orderItemRequestDTO.getItemAttributes().get(entry.getKey());
+						entry.getValue().setValue(optionValue);
+					}
+				}
+			}
 		}
 
 		try {
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
-            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
-            return context.getSeedData().getOrder();
-        } catch (WorkflowException e) {
-            throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
-        }
+			CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+			ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
+			context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+			return context.getSeedData().getOrder();
+		} catch (WorkflowException e) {
+			throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
+		}
     }
 
     @Override
