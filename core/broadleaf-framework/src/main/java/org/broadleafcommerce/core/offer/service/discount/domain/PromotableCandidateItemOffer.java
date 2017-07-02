@@ -25,7 +25,6 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -95,12 +94,4 @@ public interface PromotableCandidateItemOffer extends Serializable {
     public List<PromotableOrderItem> getLegacyCandidateTargets();
 
     public void setLegacyCandidateTargets(List<PromotableOrderItem> candidateTargets);
-
-    public BigDecimal getWeightedPercentSaved();
-
-    public void setWeightedPercentSaved(BigDecimal weightedPercentSaved);
-
-    public Money getOriginalPrice();
-
-    public void setOriginalPrice(Money originalPrice);
 }

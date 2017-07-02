@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
-import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
+import org.broadleafcommerce.core.search.service.solr.SolrIndexService;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,14 +52,12 @@ public interface SearchService {
      * search results that are in the "Enterprise Routers" category. 
      * 
      * @see #findExplicitSearchResultsByCategory(Category, SearchCriteria)
-     *
+     * 
      * @param category
      * @param searchCriteria
      * @return the result of the search
-     * @throws ServiceException
-     * @deprecated use #findSearchResults(SearchCriteria)
+     * @throws ServiceException 
      */
-    @Deprecated
     public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria)
             throws ServiceException;
     
@@ -87,10 +85,8 @@ public interface SearchService {
      * @param query
      * @param searchCriteria
      * @return the result of the search
-     * @throws ServiceException
-     * @deprecated use #findSearchResults(SearchCriteria)
+     * @throws ServiceException 
      */
-    @Deprecated
     public SearchResult findSearchResultsByQuery(String query, SearchCriteria searchCriteria)
             throws ServiceException;
     
@@ -102,19 +98,8 @@ public interface SearchService {
      * @param query
      * @param searchCriteria
      * @throws ServiceException
-     * @deprecated use #findSearchResults(SearchCriteria)
      */
-    @Deprecated
     public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException;
-
-    /**
-     * Performs a search for search results based on the given SearchCriteria, if SearchCriteria has a category, the category
-     * is considering for the search.
-     *
-     * @param searchCriteria contains the information about this given search
-     * @return the SearchResult
-     */
-    public SearchResult findSearchResults(SearchCriteria searchCriteria) throws ServiceException;
 
     /**
      * Gets all available facets for search results page
@@ -122,14 +107,6 @@ public interface SearchService {
      * @return the available facets
      */
     public List<SearchFacetDTO> getSearchFacets();
-
-    /**
-     * Gets all available facets for the given category and global search
-     *
-     * @param category
-     * @return
-     */
-    public List<SearchFacetDTO> getSearchFacets(Category category);
 
     /**
      * Gets all available facets for a given category

@@ -71,13 +71,40 @@ public class FieldDaoImpl implements FieldDao {
     
     @Override
     public List<Field> readAllProductFields() {
-        return readFieldsByEntityType(FieldEntity.PRODUCT);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
+        
+        Root<FieldImpl> root = criteria.from(FieldImpl.class);
+        
+        criteria.select(root);
+        criteria.where(
+            builder.equal(root.get("entityType").as(String.class), FieldEntity.PRODUCT.getType())
+        );
 
+        TypedQuery<Field> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
     }
 
     @Override
     public List<Field> readAllSkuFields() {
-        return readFieldsByEntityType(FieldEntity.SKU);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
+
+        Root<FieldImpl> root = criteria.from(FieldImpl.class);
+
+        criteria.select(root);
+        criteria.where(
+                builder.equal(root.get("entityType").as(String.class), FieldEntity.SKU.getType())
+                );
+
+        TypedQuery<Field> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
     }
 
     @Override
@@ -89,7 +116,7 @@ public class FieldDaoImpl implements FieldDao {
 
         criteria.select(root);
         criteria.where(
-                root.get("entityType").as(String.class).in(entityType.getAllLookupTypes())
+                builder.equal(root.get("entityType").as(String.class), entityType.getType())
                 );
 
         TypedQuery<Field> query = em.createQuery(criteria);
@@ -99,7 +126,6 @@ public class FieldDaoImpl implements FieldDao {
         return query.getResultList();
     }
 
-    @Override
     public Field save(Field field) {
         return em.merge(field);
     }

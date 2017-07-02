@@ -294,7 +294,7 @@ public class BroadleafRequestContext {
         if (javaCurrency == null) {
             try {
                 if (getBroadleafCurrency() != null && getBroadleafCurrency().getCurrencyCode() != null) {
-                    javaCurrency = getBroadleafCurrency().getJavaCurrency();
+                    javaCurrency = Currency.getInstance(getBroadleafCurrency().getCurrencyCode());
                 } else {
                     javaCurrency = Currency.getInstance(getJavaLocale());
                 }
@@ -335,6 +335,7 @@ public class BroadleafRequestContext {
         }
         
         return requestURIWithoutContext;
+        
     }
     
     protected java.util.Locale convertLocaleToJavaLocale() {      
@@ -347,7 +348,8 @@ public class BroadleafRequestContext {
     
     public static java.util.Locale convertLocaleToJavaLocale(Locale broadleafLocale) {
         if (broadleafLocale != null) {
-            return broadleafLocale.getJavaLocale();
+            String localeString = broadleafLocale.getLocaleCode();
+            return org.springframework.util.StringUtils.parseLocaleString(localeString);
         }
         return null;
     }

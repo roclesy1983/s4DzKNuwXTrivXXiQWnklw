@@ -129,7 +129,8 @@ public class MergeCartServiceImpl implements MergeCartService {
     public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder)
             throws PricingException, RemoveFromCartException {
         ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
-        Order customerCart = orderService.findCartForCustomerWithEnhancements(customer);
+        Order customerCart = orderService.findCartForCustomer(customer);
+
         if (customerCart != null) {
             List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
 

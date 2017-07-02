@@ -172,11 +172,6 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     }
 
     @Override
-    public int compareTo(Catalog other){
-        return name.compareTo(other.getName());
-    }
-
-    @Override
     public String getMainEntityName() {
         return getName();
     }

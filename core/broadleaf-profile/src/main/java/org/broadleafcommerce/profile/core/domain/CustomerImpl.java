@@ -76,8 +76,7 @@ import javax.persistence.Transient;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps = true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
@@ -151,13 +150,13 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", order = 3000,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected Boolean deactivated = false;
-
+    
     @Column(name = "IS_PREPROD")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Preprod", order = 3000,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected Boolean preprod = false;
 
-    @ManyToOne(targetEntity = LocaleImpl.class)
+	@ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale", order = 4000,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,

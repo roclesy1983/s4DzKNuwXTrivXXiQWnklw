@@ -51,7 +51,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
@@ -469,29 +468,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //support legacy api
         persistenceResponse.setEntity(postAdd(persistenceResponse.getEntity(), persistencePackage));
 
-        executeDeferredOperations(persistencePackage);
-
         return persistenceResponse;
-    }
-
-    protected void executeDeferredOperations(PersistencePackage persistencePackage) throws ServiceException {
-        if (!persistencePackage.getDeferredOperations().isEmpty()) {
-            for (Map.Entry<ChangeType, List<PersistencePackage>> entry : persistencePackage.getDeferredOperations().entrySet()) {
-                for (PersistencePackage change : entry.getValue()) {
-                    switch (entry.getKey()) {
-                        case UPDATE:
-                            update(change);
-                            break;
-                        case ADD:
-                            add(change);
-                            break;
-                        case DELETE:
-                            remove(change);
-                            break;
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -611,8 +588,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //support legacy api
         persistenceResponse.setEntity(postUpdate(persistenceResponse.getEntity(), persistencePackage));
 
-        executeDeferredOperations(persistencePackage);
-
         return persistenceResponse;
     }
 
@@ -671,8 +646,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
-
-        executeDeferredOperations(persistencePackage);
 
         return persistenceResponse;
     }

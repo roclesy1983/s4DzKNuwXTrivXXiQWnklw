@@ -20,9 +20,6 @@
 
 package org.broadleafcommerce.common.sitemap.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -51,9 +48,6 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapGeneratorConfigurationImpl")
-@DirectCopyTransform({
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
-})
 public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfiguration {
 
     private static final long serialVersionUID = 1L;

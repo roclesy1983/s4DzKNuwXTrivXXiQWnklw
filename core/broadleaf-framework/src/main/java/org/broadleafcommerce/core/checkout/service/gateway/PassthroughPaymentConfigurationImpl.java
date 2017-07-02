@@ -20,7 +20,6 @@
 package org.broadleafcommerce.core.checkout.service.gateway;
 
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
-import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayConfiguration;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,7 @@ import org.springframework.stereotype.Service;
  * @author Elbert Bautista (elbertbautista)
  */
 @Service("blPassthroughPaymentConfiguration")
-public class PassthroughPaymentConfigurationImpl extends AbstractPaymentGatewayConfiguration {
+public class PassthroughPaymentConfigurationImpl implements PaymentGatewayConfiguration {
 
     protected int failureReportingThreshold = 0;
 

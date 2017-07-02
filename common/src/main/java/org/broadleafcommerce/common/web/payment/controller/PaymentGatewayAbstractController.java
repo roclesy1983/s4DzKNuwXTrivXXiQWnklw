@@ -40,16 +40,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * <p>Abstract controller that provides convenience methods and resource declarations to facilitate payment gateway
- * communication between the implementing module and the Spring injected checkout engine. This class provides
- * generic flows and operations that are common across payment gateway integration methods.
- * You may notice that this intentionally resides in "common" as this supports the use case where an implementing module
- * can be used outside the scope of Broadleaf's "core" commerce engine.</p>
+ * <p>Abstract controller that provides convenience methods and resource declarations for Payment Gateway
+ * Operations that are shared between all gateway controllers belong here.</p>
  *
- * <p>If used in conjunction with the core framework, Broadleaf provides all the necessary spring resources, such as
- * "blPaymentGatewayCheckoutService" that are needed for this class. If you are using the common jars without the framework
- * dependency, you will either have to implement the blPaymentGatewayCheckoutService yourself, or override the
- * "applyPaymentToOrder" and the "markPaymentAsInvalid" methods accordingly.</p>
+ * <p>The Core Framework should have an implementation of a "blPaymentGatewayCheckoutService" bean defined.
+ * If you are using the common jars without the framework dependency, you will either have to
+ * implement the blPaymentGatewayCheckoutService yourself, or override the applyPaymentToOrder and
+ * the markPaymentAsInvalid methods accordingly.</p>
  *
  * @author Elbert Bautista (elbertbautista)
  */
@@ -130,41 +127,23 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     }
 
     // ***********************************************
-    // Common Checkout Result Processing
+    // Common Result Processing
     // ***********************************************
     /**
-     * This method is intended to initiate the final steps in checkout either
-     * via a request coming directly from a Payment Gateway (i.e. a Transparent Redirect) or from
-     * some sort of tokenization mechanism client-side.
-     *
-     * The assumption is that the implementing gateway's controller that extends this class
-     * will have implemented a {@link org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponseService}
-     * with the ability to translate an {@link javax.servlet.http.HttpServletRequest} into a
-     * {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO} which will then be used by the framework
-     * to create the appropriate order payments and transactions as well as invoke the checkout workflow
-     * if configured to do so.
-     *
-     * The general flow is as follows:
      *
      * try {
      *   translate http request to DTO
-     *   apply payment to order (if unsuccessful, payment will be archived)
-     *   if (not successful or not valid)
-     *     redirect to error view
+     *   apply payment to order
+     *   check success and validity of response
      *   if (complete checkout on callback == true)
      *     initiateCheckout(order id);
      *   else
      *     show review page;
      * } catch (Exception e) {
-     *     log error
+     *     notify admin user of failure
      *     handle processing exception
      * }
      *
-     * @param model - Spring MVC model
-     * @param request - the HTTPServletRequest (originating either from a Payment Gateway or from the implementing checkout engine)
-     * @param redirectAttributes - Spring MVC redirect attributes
-     * @return the resulting view
-     * @throws PaymentException
      */
     public String process(Model model, HttpServletRequest request,
                           final RedirectAttributes redirectAttributes) throws PaymentException {

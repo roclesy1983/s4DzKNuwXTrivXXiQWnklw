@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.dao;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService;
@@ -37,8 +35,6 @@ import java.util.Map;
  * @author jfischer
  */
 public class SessionFactoryChangeListener implements SessionFactoryObserver {
-    
-    private static final Log LOG = LogFactory.getLog(SessionFactoryChangeListener.class);
 
     @Override
     public void sessionFactoryClosed(SessionFactory factory) {
@@ -54,7 +50,6 @@ public class SessionFactoryChangeListener implements SessionFactoryObserver {
                 Field metadataCache = DynamicEntityRemoteService.class.getDeclaredField("METADATA_CACHE");
                 metadataCache.setAccessible(true);
                 ((Map) metadataCache.get(null)).clear();
-                LOG.info("Metadata cache cleared from recycling the session factory");
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }

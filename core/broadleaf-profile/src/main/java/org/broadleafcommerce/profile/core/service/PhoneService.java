@@ -28,8 +28,4 @@ public interface PhoneService {
     public Phone readPhoneById(Long phoneId);
 
     public Phone create();
-
-    public Phone copyPhone(Phone orig);
-
-    public Phone copyPhone(Phone dest, Phone orig);
 }

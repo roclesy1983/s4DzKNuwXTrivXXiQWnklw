@@ -46,9 +46,6 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
     @AdminPresentation(friendlyName = "RequestDTOImpl_Is_Secure")
     private Boolean secure;
 
-    public RequestDTOImpl() {
-    }
-
     public RequestDTOImpl(HttpServletRequest request) {
         requestURI = request.getRequestURI();
         fullUrlWithQueryString = request.getRequestURL().toString();

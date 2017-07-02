@@ -72,12 +72,11 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             if (customerPayment != null) {
                 Address address = customerPayment.getBillingAddress();
                 if (address != null) {
-                    billingForm.setAddress(addressService.copyAddress(address));
+                    copyAddressToBillingAddress(billingForm, address);
                 }
             }
         }
 
-        addressService.populateAddressISOCountrySub(billingForm.getAddress());
         billingInfoFormValidator.validate(billingForm, result);
         if (result.hasErrors()) {
             return getCheckoutView();
@@ -104,7 +103,7 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
                 if (p.getBillingAddress() == null) {
                     p.setBillingAddress(billingForm.getAddress());
                 } else {
-                    Address updatedAddress = addressService.copyAddress(p.getBillingAddress(), billingForm.getAddress());
+                    Address updatedAddress = updateAddress(billingForm.getAddress(), p.getBillingAddress());
                     p.setBillingAddress(updatedAddress);
                 }
                 
@@ -143,10 +142,51 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
         if (order.getFulfillmentGroups().get(0) != null) {
             Address shipping = order.getFulfillmentGroups().get(0).getAddress();
             if (shipping != null) {
-                Address billing = addressService.copyAddress(shipping) ;
-                billingInfoForm.setAddress(billing);
+                copyAddressToBillingAddress(billingInfoForm, shipping);
             }
         }
     }
+
+    protected void copyAddressToBillingAddress(BillingInfoForm billingInfoForm, Address address) {
+        Address billing = addressService.create();
+        billingInfoForm.setAddress(updateAddress(address, billing));
+    }
+
+    private Address updateAddress(Address updatedInfoAddress, Address addressToBeUpdated) {
+        addressToBeUpdated.setFullName(updatedInfoAddress.getFullName());
+        addressToBeUpdated.setFirstName(updatedInfoAddress.getFirstName());
+        addressToBeUpdated.setLastName(updatedInfoAddress.getLastName());
+        addressToBeUpdated.setAddressLine1(updatedInfoAddress.getAddressLine1());
+        addressToBeUpdated.setAddressLine2(updatedInfoAddress.getAddressLine2());
+        addressToBeUpdated.setCity(updatedInfoAddress.getCity());
+        addressToBeUpdated.setState(updatedInfoAddress.getState());
+        addressToBeUpdated.setIsoCountrySubdivision(updatedInfoAddress.getIsoCountrySubdivision());
+        addressToBeUpdated.setStateProvinceRegion(updatedInfoAddress.getStateProvinceRegion());
+        addressToBeUpdated.setPostalCode(updatedInfoAddress.getPostalCode());
+        addressToBeUpdated.setCountry(updatedInfoAddress.getCountry());
+        addressToBeUpdated.setIsoCountryAlpha2(updatedInfoAddress.getIsoCountryAlpha2());
+        addressToBeUpdated.setPrimaryPhone(updatedInfoAddress.getPrimaryPhone());
+        addressToBeUpdated.setSecondaryPhone(updatedInfoAddress.getSecondaryPhone());
+        addressToBeUpdated.setFax(updatedInfoAddress.getFax());
+        addressToBeUpdated.setPhonePrimary(copyPhone(updatedInfoAddress.getPhonePrimary(), 
+                addressToBeUpdated.getPhonePrimary()));
+        addressToBeUpdated.setPhoneSecondary(copyPhone(updatedInfoAddress.getPhoneSecondary(),
+                addressToBeUpdated.getPhoneSecondary()));
+        addressToBeUpdated.setPhoneFax(copyPhone(updatedInfoAddress.getPhoneFax(), addressToBeUpdated.getPhoneFax()));
+        addressToBeUpdated.setEmailAddress(updatedInfoAddress.getEmailAddress());
+        return addressToBeUpdated;
+    }
+
+    protected Phone copyPhone(Phone phoneToCopy, Phone phoneToUpdate) {
+        if (phoneToCopy != null) {
+            if (phoneToUpdate == null) {
+                phoneToUpdate = phoneService.create();
+            }
+            phoneToUpdate.setPhoneNumber(phoneToCopy.getPhoneNumber());
+            return phoneToUpdate;
+        }
+        return null;
+    }
+
 
 }

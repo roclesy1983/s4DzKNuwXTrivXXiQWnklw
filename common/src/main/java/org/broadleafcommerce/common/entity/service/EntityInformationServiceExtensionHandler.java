@@ -65,15 +65,6 @@ public interface EntityInformationServiceExtensionHandler extends ExtensionHandl
     ExtensionResultStatusType getBaseProfileIdForSite(Site site, ExtensionResultHolder<Long> erh);
 
     /**
-     * Handler implementations will popoulate the {@link ExtensionResultHolder} with a valid
-     * parent site if one exists for the profile
-     *
-     * @param profile {@link Site} the profile to check for the parent site
-     * @param erh {@link ExtensionResultHolder} a container for the result
-     */
-    ExtensionResultStatusType getParentSiteForProfile(Site profile, ExtensionResultHolder<Site> erh);
-
-    /**
      * Handler implementations will set the value of {@link ExtensionResultHolder} to true if the
      * passed in object supports site discriminator usage.   For example, when running in a Multi-Tenant
      * Broadleaf implementation.
@@ -92,11 +83,4 @@ public interface EntityInformationServiceExtensionHandler extends ExtensionHandl
      */
     ExtensionResultStatusType findAllCatalogs(ExtensionResultHolder<List<Catalog>> erh);
 
-    /**
-     * Handler implementations will populate the {@link ExtensionResultHolder} with a valid default catalog id for the site
-     *
-     * @param site {@link Site} the Site to get the catalog id from
-     * @param erh {@link ExtensionResultHolder} a container for the result
-     */
-    ExtensionResultStatusType getDefaultCatalogIdForSite(Site site, ExtensionResultHolder<Long> erh);
 }

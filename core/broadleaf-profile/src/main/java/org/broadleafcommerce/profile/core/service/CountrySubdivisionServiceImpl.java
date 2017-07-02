@@ -56,16 +56,6 @@ public class CountrySubdivisionServiceImpl implements CountrySubdivisionService 
     }
 
     @Override
-    public CountrySubdivision findSubdivisionByCountryAndAltAbbreviation(String countryAbbreviation, String altAbbreviation) {
-        return countrySubdivisionDao.findSubdivisionByCountryAndAltAbbreviation(countryAbbreviation, altAbbreviation);
-    }
-
-    @Override
-    public CountrySubdivision findSubdivisionByCountryAndName(String countryAbbreviation, String name) {
-        return countrySubdivisionDao.findSubdivisionByCountryAndName(countryAbbreviation, name);
-    }
-
-    @Override
     @Transactional("blTransactionManager")
     public CountrySubdivision save(CountrySubdivision subdivision) {
         return countrySubdivisionDao.save(subdivision);

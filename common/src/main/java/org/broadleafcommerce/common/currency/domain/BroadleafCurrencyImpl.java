@@ -35,7 +35,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * Author: jerryocanas Date: 9/6/12
@@ -67,20 +66,10 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency, AdminMainEntity
     @Column(name = "DEFAULT_FLAG")
     @AdminPresentation(friendlyName = "BroadleafCurrencyImpl_Is_Default", group = "BroadleafCurrencyImpl_Details", excluded = true)
     protected Boolean defaultFlag = false;
-    
-    @Transient
-    protected java.util.Currency javaCurrency;
 
     @Override
     public String getCurrencyCode() {
         return currencyCode;
-    }
-    
-    public java.util.Currency getJavaCurrency() {
-        if (javaCurrency == null && getCurrencyCode() != null) {
-            javaCurrency = java.util.Currency.getInstance(getCurrencyCode());
-        }
-        return javaCurrency;
     }
 
     @Override

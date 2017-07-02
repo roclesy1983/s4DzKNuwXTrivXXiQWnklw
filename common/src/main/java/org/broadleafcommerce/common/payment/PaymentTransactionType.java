@@ -26,7 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * The PaymentTransactionType is used to represent the types of operations/transactions that could occur against a single payment.
+ * The PaymentTransactionType is used to represent the types of operations that could occur on the within the same payment.
  * In the Broadleaf core framework, these types appear on the org.broadleafcommerce.core.payment.domain.PaymentTransaction.
  *
  * @see {@link #AUTHORIZE}
@@ -34,58 +34,12 @@ import java.util.Map;
  * @see {@link #AUTHORIZE_AND_CAPTURE}
  * @see {@link #SETTLED}
  * @see {@link #REFUND}
- * @see {@link #DETACHED_CREDIT}
  * @see {@link #VOID}
  * @see {@link #REVERSE_AUTH}
  * @see {@link #UNCONFIRMED}
- * @see {@link #PENDING}
- *
- *  The following is a depiction of the possible state flows for an Order Payment and the
- *  hierarchical relationship of all its transactions:
- *
- * +-------------+
- * | UNCONFIRMED |
- * +-+-----------+
- *   |
- *   | +--------------------+
- *   +-+ PENDING (Optional) |
- *     +-+----------------+-+
- *       |                |
- *       | +-----------+  |                +-----------------------+
- *       +-+ AUTHORIZE |  +----------------+ AUTHORIZE_AND_CAPTURE |
- *         +-+---------+                   +-+---------------------+
- *           |                             |
- *           | +-------------------+       | +------+
- *           +-+ REVERSE_AUTHORIZE |       +-+ VOID |
- *           | +-------------------+       | +------+
- *           |                             |
- *           | +---------+                 | +--------------------+
- *           +-+ CAPTURE |                 +-+ SETTLED (Optional) |
- *             +-+-------+                   +-+------------------+
- *               |                             |
- *               | +------+                    | +--------+
- *               +-+ VOID |                    +-+ REFUND |
- *               | +------+                      +--------+
- *               |
- *               | +--------------------+
- *               +-+ SETTLED (Optional) |
- *                 +-+------------------+
- *                   |
- *                   | +--------+
- *                   +-+ REFUND |
- *                     +--------+
- *
- * +-------------+
- * | UNCONFIRMED |
- * +-+-----------+
- *   |
- *   | +-----------------+
- *   +-+ DETACHED_CREDIT |
- *     +-+---------------+
  *
  * @author Jerry Ocanas (jocanas)
  * @author Phillip Verheyden (phillipuniverse)
- * @author Elbert Bautista (elbertbautista)
  */
 public class PaymentTransactionType implements Serializable, BroadleafEnumerationType {
 
@@ -125,30 +79,15 @@ public class PaymentTransactionType implements Serializable, BroadleafEnumeratio
     public static final PaymentTransactionType SETTLED = new PaymentTransactionType("SETTLED", "Settled");
     
     /**
-     * <p>Funds have been refunded/credited. This can <b>ONLY</b> occur after funds have been {@link #CAPTURE}d or
-     * {@link #SETTLED}. This should only be used when money goes back to a customer. This assumes that
-     * there will be a parent {@link #AUTHORIZE_AND_CAPTURE}, {@link #CAPTURE}, or {@link #SETTLED} transaction
-     * that this can be tied back to.</p>
-     *
-     * <p>NOTE: This can also be referred to as a "follow-on credit"</p>
+     * Funds have been refunded/credited. This can <b>ONLY</b> occur after funds have been {@link #CAPTURE}d or
+     * {@link #SETTLED}. This should only be used when money goes back to a customer.
      */
     public static final PaymentTransactionType REFUND = new PaymentTransactionType("REFUND", "Refund");
-
-    /**
-     * <p>Some payment processors allow you to issue credit to a customer that is not tied
-     * to an initial {@link #AUTHORIZE} or {@link #AUTHORIZE_AND_CAPTURE} transaction.
-     * Most payment gateways disable this feature by default because it is against
-     * card association (e.g. Visa, MasterCard) rules. However, there may be legitimate instances
-     * where you had a sale transaction but are not able to issue a refund (e.g. closed account of original payment etc...)
-     * Please contact your payment gateway provider to see how to enable this feature.</p>
-     *
-     * <p>NOTE: This can also be referred to as a "blind credit" or "stand-alone credit"</p>
-     */
-    public static final PaymentTransactionType DETACHED_CREDIT = new PaymentTransactionType("DETACHED_CREDIT", "Detached Credit");
     
     /**
-     * <p>Void can happen after a CAPTURE but before it has been SETTLED. Payment transactions are usually settled in batches
-     * at the end of the day.</p>
+     * Void can happen after a CAPTURE but before it has been SETTLED. Payment transactions are usually settled in batches
+     * at the end of the day. This basically performs the same action as a REFUND, although the transaction might not
+     * hit the customer's card.
      */
     public static final PaymentTransactionType VOID = new PaymentTransactionType("VOID", "Void");
     
@@ -159,36 +98,17 @@ public class PaymentTransactionType implements Serializable, BroadleafEnumeratio
     public static final PaymentTransactionType REVERSE_AUTH = new PaymentTransactionType("REVERSE_AUTH", "Reverse Auth");
 
     /**
-     * <p>This applies to payment types like "PayPal Express Checkout" and Credit Card tokens/nonce
-     * where a transaction must be confirmed at a later stage.
-     * A payment is considered "confirmed" if the gateway has actually processed a transaction against this user's card/account.
-     * There might be instances where payments have not been confirmed at the moment it has been added to the order.
-     *
-     * For example, there might be a scenario where it is desirable to show a 'review confirmation' page to the user before actually
-     * hitting 'submit' and completing the checkout workflow (this is also the desired case
-     * with gift cards and account credits).</p>
+     * <p>This occurs for Payment Types like PayPal Express Checkout where a transaction must be confirmed at a later stage. A transaction is confirmed if the gateway
+     * has actually communicated something to hit against the user's card. There might be instances where payments have not
+     * been confirmed at the moment that those payments have actually been added to the order. For instance, there might be
+     * a scenario where it is desired to show a 'confirmation' page to the user before actually hitting 'submit' and
+     * completing the checkout workflow that actually takes funds away from the user account (this is also the desired case
+     * with gift cards and account credits). When the user adds all of the payments to their order, all of those payments
+     * may not have been confirmed by the gateway but they should be on checkout.</p>
      * 
-     * <p>It is important to note that all "UNCONFIRMED" transactions will be confirmed in the checkout workflow via the
-     * {@link ValidateAndConfirmPaymentActivity}. That means that any unconfirmed CREDIT_CARD transactions will be
-     * "Authorized" or "Authorized and Captured" at time of checkout. If the Order Payment is of any other type, then the activity
-     * will attempt to call the gateways implementation of:
-     * {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService#confirmTransaction(org.broadleafcommerce.common.payment.dto.PaymentRequestDTO)}</p>
+     * <p>Unconfirmed transactions are confirmed in the checkout workflow via the {@link ValidateAndConfirmPaymentActivity}.</p>
      */
     public static final PaymentTransactionType UNCONFIRMED = new PaymentTransactionType("UNCONFIRMED", "Not Confirmed");
-
-    /**
-     * <p>Some implementations may wish to defer any Authorization or Authorize and Capture transactions outside
-     * the scope of the checkout workflow. For example, some may wish to take all orders up front (possibly
-     * just doing AVS and CVV checks during checkout) and opt to process the users card offline or asynchronously
-     * through some other external mechanism or process. In this scenario, you may create an Order Payment with
-     * a transaction that "marks" it with the intention of being processed later. This allows the
-     * {@link ValidateAndConfirmPaymentActivity} to correctly compare the equality of all the successful payments on the order
-     * against the order total.</p>
-     *
-     * <p>NOTE: This differs from {@link #UNCONFIRMED} because at the time of checkout,
-     * the checkout workflow will try to AUTH or SALE any UNCONFIRMED transactions on all the payments.</p>
-     */
-    public static final PaymentTransactionType PENDING = new PaymentTransactionType("PENDING", "Pending Authorize or Authorize and Capture");
 
 
     public static PaymentTransactionType getInstance(final String type) {

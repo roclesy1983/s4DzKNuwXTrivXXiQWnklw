@@ -41,7 +41,6 @@ import javax.persistence.OneToMany;
  * @author Kelly Tisdell
  *
  */
-@Deprecated
 public abstract class OptionalEnterpriseBandedWeightFulfillmentOptionTemplate {
 
     @OneToMany(mappedBy = "option", targetEntity = FulfillmentWeightBandImpl.class)

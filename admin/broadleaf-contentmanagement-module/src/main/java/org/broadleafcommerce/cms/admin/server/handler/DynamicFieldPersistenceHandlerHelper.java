@@ -31,7 +31,6 @@ import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -95,9 +94,7 @@ public class DynamicFieldPersistenceHandlerHelper {
             Map<String, String> itemMap = new HashMap<String, String>();
             itemMap.put("regularExpression", definition.getValidationRegEx());
             itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
-            List<Map<String, String>> configurationItems = new ArrayList<Map<String, String>>();
-            configurationItems.add(itemMap);
-            fieldMetadata.getValidationConfigurations().put(RegexPropertyValidator.class.getName(), configurationItems);
+            fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", itemMap);
         }
         
         

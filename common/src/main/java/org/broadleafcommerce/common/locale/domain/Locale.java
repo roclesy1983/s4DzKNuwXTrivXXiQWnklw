@@ -31,8 +31,6 @@ public interface Locale extends Serializable {
     String getLocaleCode();
 
     void setLocaleCode(String localeCode);
-    
-    public java.util.Locale getJavaLocale();
 
     public String getFriendlyName();
 

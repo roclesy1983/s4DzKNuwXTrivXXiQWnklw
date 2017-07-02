@@ -22,8 +22,6 @@ package org.broadleafcommerce.core.web.controller.catalog;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.file.service.StaticAssetPathService;
-import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -38,7 +36,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -60,11 +57,7 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Autowired(required = false)
     @Qualifier("blProductDeepLinkService")
     protected DeepLinkService<Product> deepLinkService;
-
-    @Resource(name="blStaticAssetPathService")
-    protected StaticAssetPathService staticAssetPathService;
-
-
+    
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
 
@@ -73,6 +66,7 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         ModelAndView model = new ModelAndView();
         Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
         assert(product != null);
+        
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
         Set<Product> allProductsSet = new HashSet<Product>();
         allProductsSet.add(product);

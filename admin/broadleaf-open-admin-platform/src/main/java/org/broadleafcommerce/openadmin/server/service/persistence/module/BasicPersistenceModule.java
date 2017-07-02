@@ -341,7 +341,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                     }
 
-                    if ((mutable == null || mutable) && (readOnly == null || !readOnly) && property.getEnabled()) {
+                    if ((mutable == null || mutable) && (readOnly == null || !readOnly)) {
                         if (value != null) {
                             handled = false;
                             PopulateValueRequest request = new PopulateValueRequest(setId,

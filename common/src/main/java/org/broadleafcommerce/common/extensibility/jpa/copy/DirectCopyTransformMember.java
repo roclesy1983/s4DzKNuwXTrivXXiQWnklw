@@ -44,6 +44,6 @@ public @interface DirectCopyTransformMember {
      *
      * @return
      */
-    boolean skipOverlaps() default true;
+    boolean skipOverlaps() default false;
 
 }

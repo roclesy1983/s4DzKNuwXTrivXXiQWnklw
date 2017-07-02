@@ -21,6 +21,8 @@ package org.broadleafcommerce.profile.web.controller;
 
 import org.broadleafcommerce.profile.core.domain.ChallengeQuestion;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
+import org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl;
 import org.broadleafcommerce.profile.core.service.ChallengeQuestionService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
@@ -35,7 +37,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

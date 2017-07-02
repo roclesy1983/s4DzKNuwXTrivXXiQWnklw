@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -105,9 +104,8 @@ public class FieldMetadataOverride {
     private Boolean prominent;
     private String columnWidth;
     private String broadleafEnumeration;
-    private String fieldComponentRenderer;
     private Boolean readOnly;
-    private Map<String, List<Map<String, String>>> validationConfigurations;
+    private Map<String, Map<String, String>> validationConfigurations;
     private Boolean requiredOverride;
     private String tooltip;
     private String helpText;
@@ -317,16 +315,6 @@ public class FieldMetadataOverride {
         this.broadleafEnumeration = broadleafEnumeration;
     }
 
-    
-    public String getFieldComponentRenderer() {
-        return fieldComponentRenderer;
-    }
-
-    
-    public void setFieldComponentRenderer(String fieldComponentRenderer) {
-        this.fieldComponentRenderer = fieldComponentRenderer;
-    }
-
     public Boolean getReadOnly() {
         return readOnly;
     }
@@ -383,11 +371,11 @@ public class FieldMetadataOverride {
         this.gridOrder = gridOrder;
     }
 
-    public Map<String, List<Map<String, String>>> getValidationConfigurations() {
+    public Map<String, Map<String, String>> getValidationConfigurations() {
         return validationConfigurations;
     }
 
-    public void setValidationConfigurations(Map<String, List<Map<String, String>>> validationConfigurations) {
+    public void setValidationConfigurations(Map<String, Map<String, String>> validationConfigurations) {
         this.validationConfigurations = validationConfigurations;
     }
 

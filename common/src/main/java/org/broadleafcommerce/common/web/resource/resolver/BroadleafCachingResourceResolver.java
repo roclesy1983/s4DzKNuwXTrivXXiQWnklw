@@ -96,7 +96,7 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
             String key = computeKey(request, requestPath) + getThemePathFromBRC();
             Resource resource = this.cache.get(key, Resource.class);
 
-            if (resource != null && resource.exists()) {
+            if (resource != null) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Found match");
                 }

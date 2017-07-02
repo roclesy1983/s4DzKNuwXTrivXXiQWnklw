@@ -21,7 +21,6 @@ package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import java.util.List;
-import javax.annotation.Nonnull;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -35,10 +34,6 @@ public interface CountrySubdivisionDao {
     public List<CountrySubdivision> findSubdivisionsByCountryAndCategory(String countryAbbreviation, String category);
 
     public CountrySubdivision findSubdivisionByAbbreviation(String abbreviation);
-
-    public CountrySubdivision findSubdivisionByCountryAndAltAbbreviation(@Nonnull String countryAbbreviation, @Nonnull String altAbbreviation);
-
-    public CountrySubdivision findSubdivisionByCountryAndName(@Nonnull String countryAbbreviation, @Nonnull String name);
 
     public CountrySubdivision create();
 

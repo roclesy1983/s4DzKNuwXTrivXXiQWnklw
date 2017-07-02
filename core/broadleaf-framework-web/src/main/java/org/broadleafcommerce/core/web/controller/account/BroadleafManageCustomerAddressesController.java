@@ -67,7 +67,6 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     }
 
     public String addCustomerAddress(HttpServletRequest request, Model model, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
-        addressService.populateAddressISOCountrySub(form.getAddress());
         customerAddressValidator.validate(form, result);
         if (result.hasErrors()) {
             return getCustomerAddressesView();

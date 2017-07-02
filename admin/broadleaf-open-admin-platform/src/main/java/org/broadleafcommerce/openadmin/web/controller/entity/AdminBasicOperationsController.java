@@ -209,10 +209,4 @@ public class AdminBasicOperationsController extends AdminAbstractController {
     protected void modifyFetchPersistencePackageRequest(PersistencePackageRequest ppr, Map<String, String> pathVars) {
 
     }
-
-    @RequestMapping(value = "/update-navigation", method = RequestMethod.GET)
-    public String updateAdminNavigation(HttpServletRequest request, HttpServletResponse response, Model model,
-                                        @PathVariable Map<String, String> pathVars) throws Exception {
-        return "layout/partials/leftNav";
-    }
 }

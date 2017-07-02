@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModel
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -44,7 +45,6 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 @Entity
@@ -82,12 +82,11 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @AdminPresentation(excluded = true, friendlyName = "productBundlePriority", group="productBundleGroup")
     protected Integer priority=99;
 
-    @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL },orphanRemoval = true)
-    @OrderBy(value = "sequence")
+    @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "skuBundleItemsTitle",
-            sortProperty="sequence")
+    @AdminPresentationCollection(friendlyName = "skuBundleItemsTitle")
     protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
     
     @Override

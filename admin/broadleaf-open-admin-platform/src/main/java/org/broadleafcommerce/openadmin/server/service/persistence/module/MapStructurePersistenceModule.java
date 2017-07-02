@@ -594,32 +594,25 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         entityItem.setType(new String[]{ceilingClass});
         List<Property> props = new ArrayList<Property>();
 
-        Property keyProperty = new Property();
-        keyProperty.setName(mapStructure.getKeyPropertyName());
-        String keyPropertyValue;
+        Property propertyItem = new Property();
+        propertyItem.setName(mapStructure.getKeyPropertyName());
+        props.add(propertyItem);
+        String strVal;
         if (Date.class.isAssignableFrom(key.getClass())) {
-            keyPropertyValue = getSimpleDateFormatter().format((Date) key);
+            strVal = getSimpleDateFormatter().format((Date) key);
         } else if (Timestamp.class.isAssignableFrom(key.getClass())) {
-            keyPropertyValue = getSimpleDateFormatter().format(new Date(((Timestamp) key).getTime()));
+            strVal = getSimpleDateFormatter().format(new Date(((Timestamp) key).getTime()));
         } else if (Calendar.class.isAssignableFrom(key.getClass())) {
-            keyPropertyValue = getSimpleDateFormatter().format(((Calendar) key).getTime());
+            strVal = getSimpleDateFormatter().format(((Calendar) key).getTime());
         } else if (Double.class.isAssignableFrom(key.getClass())) {
-            keyPropertyValue = getDecimalFormatter().format(key);
+            strVal = getDecimalFormatter().format(key);
         } else if (BigDecimal.class.isAssignableFrom(key.getClass())) {
-            keyPropertyValue = getDecimalFormatter().format(key);
+            strVal = getDecimalFormatter().format(key);
         } else {
-            keyPropertyValue = key.toString();
+            strVal = key.toString();
         }
-        keyProperty.setValue(keyPropertyValue);
-        props.add(keyProperty);
-        if (SimpleValueMapStructure.class.isInstance(mapStructure)) {
-            SimpleValueMapStructure simpleValueMapStructure = (SimpleValueMapStructure) mapStructure;
-            Property valueProperty = new Property();
-            valueProperty.setName(simpleValueMapStructure.getValuePropertyName());
-            valueProperty.setDisplayValue((String)valueInstance);
-            valueProperty.setValue((String)valueInstance);
-            props.add(valueProperty);
-        }
+        propertyItem.setValue(strVal);
+
         extractPropertiesFromPersistentEntity(valueMergedProperties, valueInstance, props);
         if (symbolicIdProperty != null) {
             props.add(symbolicIdProperty);

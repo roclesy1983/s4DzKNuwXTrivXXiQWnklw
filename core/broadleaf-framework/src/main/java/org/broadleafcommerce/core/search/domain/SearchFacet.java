@@ -21,7 +21,6 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -30,7 +29,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFacet> {
+public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
 
     /**
      * Returns the internal id
@@ -47,50 +46,19 @@ public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFa
     public void setId(Long id);
 
     /**
-     * The main relationship to the rest of the search index entities
-     * @see {@link #getField()}
-     * @see {@link #getFacetFieldType()}
-     */
-    public IndexFieldType getFieldType();
-    
-    public void setFieldType(IndexFieldType fieldType);
-    
-    /**
-     * <p>
-     * Returns the field associated with this facet.
-     * 
-     * <p>
-     * This is a convenience method for <pre>{@code getFieldType().getIndexField().getField()}</pre>
+     * Returns the field associated with this facet. 
      * 
      * @return the fieldName
      */
     public Field getField();
-    
-    /**
-     * <p>
-     * This String represents the FieldType for the given SearchFacet. This is the FieldType that will be used when this Field is indexed in Solr
-     *
-     * <p>
-     * This is a convience method for <pre>{@code getFieldType().getFieldType().getType()}</pre>
-     *
-     * @return the String representing the FieldType of this SearchFacet
-     */
-    public String getFacetFieldType();
 
     /**
-     * Gets the name of this SearchFacet. This is for admin naming purposes.
-     *
-     * @return the name
+     * Sets the field associated with this facet.
+     * 
+     * @see #getFieldName()
+     * @param fieldName
      */
-    public String getName();
-
-    /**
-     * Sets the name
-     *
-     * @see #getName()
-     * @param name
-     */
-    public void setName(String name);
+    public void setField(Field field);
 
     /**
      * Gets the label of this SearchFacet. This is the label that will be used for the user-friendly
@@ -151,21 +119,6 @@ public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFa
      * @return the multiselect flag
      */
     public Boolean getCanMultiselect();
-
-    /**
-     * Gets whether or not this facet uses facet ranges
-     *
-     * @return the useFacetRanges flag
-     */
-    public Boolean getUseFacetRanges();
-
-    /**
-     * Sets useFacetRanges
-     *
-     * @see #getUseFacetRanges()
-     * @return
-     */
-    public void setUseFacetRanges(Boolean useFacetRanges);
 
     /**
      * Gets the applicable ranges for this search facet, if any are specified. For example, the 

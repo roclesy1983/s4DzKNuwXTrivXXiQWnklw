@@ -29,6 +29,8 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
+import org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -37,6 +39,9 @@ import org.broadleafcommerce.profile.web.core.service.login.LoginService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -93,11 +98,11 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
             customer.setUsername(customer.getEmailAddress());
         }
         
-        registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
-        if (!errors.hasErrors()) {
+		registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
+		if (!errors.hasErrors()) {
 			Customer customer = registerCustomerForm.getCustomer();
 			Customer newCustomer = customerService.registerCustomer(customer, registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm(), "ROLE_USER");
-            assert(newCustomer != null);
+			assert (newCustomer != null);
             
             // The next line needs to use the customer from the input form and not the customer returned after registration
             // so that we still have the unencoded password for use by the authentication mechanism.

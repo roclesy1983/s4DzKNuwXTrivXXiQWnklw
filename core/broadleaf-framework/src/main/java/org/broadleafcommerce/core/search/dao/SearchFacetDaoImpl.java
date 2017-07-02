@@ -22,12 +22,9 @@ package org.broadleafcommerce.core.search.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
-import org.broadleafcommerce.core.search.domain.IndexField;
-import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -35,7 +32,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -62,12 +58,11 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         criteria.select(facet);
         criteria.where(
                 builder.equal(facet.get("showOnSearch").as(Boolean.class), true),
-                facet.join("fieldType").join("indexField").join("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes())
+                builder.equal(facet.join("field").get("entityType").as(String.class), entityType.getType())
         );
 
         TypedQuery<SearchFacet> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
         
         return query.getResultList();
     }
@@ -104,7 +99,6 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 
         TypedQuery<T> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
         
         return query.getResultList();
     }
@@ -112,28 +106,5 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
     @Override
     public SearchFacet save(SearchFacet searchFacet) {
         return em.merge(searchFacet);
-    }
-
-    @Override
-    public SearchFacet readSearchFacetForField(Field field) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<SearchFacet> criteria = builder.createQuery(SearchFacet.class);
-
-        Root<SearchFacetImpl> facet = criteria.from(SearchFacetImpl.class);
-
-        criteria.select(facet);
-        criteria.where(
-                builder.equal(facet.join("fieldType").join("indexField").join("field").get("id").as(Long.class), field.getId())
-        );
-
-        TypedQuery<SearchFacet> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
-
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
     }
 }

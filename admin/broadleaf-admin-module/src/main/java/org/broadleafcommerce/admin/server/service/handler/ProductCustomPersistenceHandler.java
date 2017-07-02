@@ -93,13 +93,13 @@ import javax.persistence.criteria.Root;
  */
 @Component("blProductCustomPersistenceHandler")
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-    
+
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-
+    
     @Value("${use.email.for.site.login:true}")
     protected boolean useEmailForLogin;
 
@@ -277,41 +277,43 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     }
 
     @Override
-    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        Entity entity  = persistencePackage.getEntity();
-        try {
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+		Entity entity = persistencePackage.getEntity();
+		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+			Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
 
-            if (adminInstance instanceof ProductBundle) {
-                removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
-            }
-            
-            adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            adminInstance = dynamicEntityDao.merge(adminInstance);
-            boolean handled = false;
-            if (extensionManager != null) {
-                ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForAdd(persistencePackage, adminInstance);
-                handled = ExtensionResultStatusType.NOT_HANDLED != result;
-            }
-            if (!handled) {
-                setupXref(adminInstance);
-            }
-            
-            //Since none of the Sku fields are required, it's possible that the user did not fill out
-            //any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
-            if (adminInstance.getDefaultSku() == null) {
-                Sku newSku = catalogService.createSku();
-                dynamicEntityDao.persist(newSku);
-                adminInstance.setDefaultSku(newSku);
-                adminInstance = dynamicEntityDao.merge(adminInstance);
-            }
+			if (adminInstance instanceof ProductBundle) {
+				removeBundleFieldRestrictions((ProductBundle) adminInstance, adminProperties, entity);
+			}
 
-            //also set the default product for the Sku
-            adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
-            dynamicEntityDao.merge(adminInstance.getDefaultSku());
-            // create a customer to link a product
+			adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+			adminInstance = dynamicEntityDao.merge(adminInstance);
+			boolean handled = false;
+			if (extensionManager != null) {
+				ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForAdd(persistencePackage, adminInstance);
+				handled = ExtensionResultStatusType.NOT_HANDLED != result;
+			}
+			if (!handled) {
+				setupXref(adminInstance);
+			}
+
+			// Since none of the Sku fields are required, it's possible that the
+			// user did not fill out
+			// any Sku fields, and thus a Sku would not be created. Product
+			// still needs a default Sku so instantiate one
+			if (adminInstance.getDefaultSku() == null) {
+				Sku newSku = catalogService.createSku();
+				dynamicEntityDao.persist(newSku);
+				adminInstance.setDefaultSku(newSku);
+				adminInstance = dynamicEntityDao.merge(adminInstance);
+			}
+
+			// also set the default product for the Sku
+			adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
+			dynamicEntityDao.merge(adminInstance.getDefaultSku());
+
 			Customer adminCustomerInstance = (Customer) Class.forName("org.broadleafcommerce.profile.core.domain.CustomerImpl").newInstance();
 			String attributeLinkProductCustomer = new String();
 			if (useEmailForLogin) {
@@ -331,9 +333,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 			customerService.createRegisteredCustomerRoles(adminCustomerInstance, "ROLE_DOCTOR");
 			catalogService.saveProductCustomerXref(adminInstance, adminCustomerInstance);
 
-            return helper.getRecord(adminProperties, adminInstance, null, null);
-        } catch (Exception e) {
-            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+			return helper.getRecord(adminProperties, adminInstance, null, null);
+		} catch (Exception e) {
+			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
     }
 
@@ -367,8 +369,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForUpdate
                         (persistencePackage, adminInstance);
                 handled = ExtensionResultStatusType.NOT_HANDLED != result;
-
-                extensionManager.getProxy().manageFields(persistencePackage, adminInstance);
             }
             if (!handled) {
                 setupXref(adminInstance);

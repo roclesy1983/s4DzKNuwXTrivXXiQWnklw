@@ -149,45 +149,43 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                     }
 
                     //Now execute the validators configured for this particular field
-                    Map<String, List<Map<String, String>>> validations =
+                    Map<String, Map<String, String>> validations =
                             ((BasicFieldMetadata) metadata).getValidationConfigurations();
-                    for (Map.Entry<String, List<Map<String, String>>> validation : validations.entrySet()) {
+                    for (Map.Entry<String, Map<String, String>> validation : validations.entrySet()) {
                         String validationImplementation = validation.getKey();
-                        
-                        for (Map<String, String> configuration : validation.getValue()) {
+                        Map<String, String> configuration = validation.getValue();
 
-                            PropertyValidator validator = null;
-    
-                            //attempt bean resolution to find the validator
-                            if (applicationContext.containsBean(validationImplementation)) {
-                                validator = applicationContext.getBean(validationImplementation, PropertyValidator.class);
+                        PropertyValidator validator = null;
+
+                        //attempt bean resolution to find the validator
+                        if (applicationContext.containsBean(validationImplementation)) {
+                            validator = applicationContext.getBean(validationImplementation, PropertyValidator.class);
+                        }
+
+                        //not a bean, attempt to instantiate the class
+                        if (validator == null) {
+                            try {
+                                validator = (PropertyValidator) Class.forName(validationImplementation).newInstance();
+                            } catch (Exception e) {
+                                //do nothing
                             }
-    
-                            //not a bean, attempt to instantiate the class
-                            if (validator == null) {
-                                try {
-                                    validator = (PropertyValidator) Class.forName(validationImplementation).newInstance();
-                                } catch (Exception e) {
-                                    //do nothing
-                                }
-                            }
-    
-                            if (validator == null) {
-                                throw new PersistenceException("Could not find validator: " + validationImplementation +
-                                        " for property: " + propertyName);
-                            }
-    
-                            PropertyValidationResult result = validator.validate(entity,
-                                                                            instance,
-                                                                            propertiesMetadata,
-                                                                            configuration,
-                                                                            (BasicFieldMetadata)metadata,
-                                                                            propertyName,
-                                                                            propertyValue);
-                            if (!result.isValid()) {
-                                for (String message : result.getErrorMessages()) {
-                                    submittedEntity.addValidationError(propertyName, message);
-                                }
+                        }
+
+                        if (validator == null) {
+                            throw new PersistenceException("Could not find validator: " + validationImplementation +
+                                    " for property: " + propertyName);
+                        }
+
+                        PropertyValidationResult result = validator.validate(entity,
+                                                                        instance,
+                                                                        propertiesMetadata,
+                                                                        configuration,
+                                                                        (BasicFieldMetadata)metadata,
+                                                                        propertyName,
+                                                                        propertyValue);
+                        if (!result.isValid()) {
+                            for (String message : result.getErrorMessages()) {
+                                submittedEntity.addValidationError(propertyName, message);
                             }
                         }
                     }
