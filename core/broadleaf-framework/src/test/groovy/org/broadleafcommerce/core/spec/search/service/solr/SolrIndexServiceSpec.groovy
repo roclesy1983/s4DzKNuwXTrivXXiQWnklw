@@ -30,7 +30,7 @@ import org.broadleafcommerce.core.search.dao.FieldDao
 import org.broadleafcommerce.core.search.dao.SolrIndexDao
 import org.broadleafcommerce.core.search.domain.Field
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService
-import org.broadleafcommerce.core.search.service.solr.SolrIndexServiceImpl
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl
 import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionHandler
 import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionManager
 import org.springframework.transaction.PlatformTransactionManager

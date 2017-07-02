@@ -45,7 +45,7 @@ import java.util.Set;
  * @author btaylor
  * @see {@link ProductImpl},{@link Sku}, {@link Category}
  */
-public interface Product extends Serializable, MultiTenantCloneable<Product> {
+public interface Product extends Serializable, MultiTenantCloneable<Product>, Indexable {
 
     /**
      * The id of the Product.
@@ -228,8 +228,16 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      */
     public void setCanSellWithoutOptions(Boolean canSellWithoutOptions);
 
+    /**
+     * @return whether or not the product is service
+     */
     public Boolean getIsService();
     
+    /**
+     * Sets whether or not the product is service
+     * 
+     * @param isService
+     */
 	public void setIsService(Boolean isService);
 	
     /**
@@ -809,5 +817,11 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @return
      */
     public Money getSalePrice();
+
+    /**
+     * added just for convenience, references defaultSku.margin
+     * @return
+     */
+    public Money getMargin();
 
 }

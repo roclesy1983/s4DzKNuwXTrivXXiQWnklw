@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.UnspecifiedBooleanType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -145,10 +146,14 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Column(name="FIELD_VALUE", length = Integer.MAX_VALUE - 1)
     @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_TRANSACTION_ID"))
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields",
+    @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields", isSimpleValue = UnspecifiedBooleanType.TRUE,
         forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentTransactionImpl_Additional_Fields_Name"
     )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
+
+    @Column(name = "SAVE_TOKEN")
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Save_Token")
+    protected Boolean saveToken = false;
 
     @Override
     public Long getId() {
@@ -253,6 +258,16 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Override
     public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
+    }
+
+    @Override
+    public boolean isSaveToken() {
+        return saveToken == null ? false : saveToken;
+    }
+
+    @Override
+    public void setSaveToken(boolean saveToken) {
+        this.saveToken = saveToken;
     }
 
     @Override

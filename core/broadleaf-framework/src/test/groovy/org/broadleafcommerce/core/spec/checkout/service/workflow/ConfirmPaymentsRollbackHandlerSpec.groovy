@@ -48,6 +48,7 @@ import org.broadleafcommerce.common.web.payment.processor.CreditCardTypesExtensi
 import org.broadleafcommerce.common.web.payment.processor.TRCreditCardExtensionHandler
 import org.broadleafcommerce.core.checkout.service.workflow.ConfirmPaymentsRollbackHandler
 import org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity
+import org.broadleafcommerce.core.checkout.service.gateway.PassthroughPaymentConfigurationServiceImpl
 import org.broadleafcommerce.core.order.domain.Order
 import org.broadleafcommerce.core.order.service.OrderService
 import org.broadleafcommerce.core.payment.domain.OrderPayment
@@ -78,7 +79,7 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
 
         stateConfiguration = new HashMap<String, Collection<PaymentTransaction>>()
 
-        PaymentGatewayConfigurationService cfg = new PaymentGatewayConfigurationService() {
+        PaymentGatewayConfigurationService cfg = new PassthroughPaymentConfigurationServiceImpl() {
 
             PaymentGatewayRollbackService paymentGatewayRollbackService = new PaymentGatewayRollbackService() {
 

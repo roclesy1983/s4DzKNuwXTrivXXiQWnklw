@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,16 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
+package org.broadleafcommerce.common.payment.service;
 
-/**
- * Responsible for reading and writing the index status to some persistent store (e.g. the file system).
- *
- * @author Jeff Fischer
- */
-public interface SolrIndexStatusProvider {
+import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
+import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 
-    void handleUpdateIndexStatus(IndexStatusInfo status);
+public class AbstractPaymentGatewayFraudService implements PaymentGatewayFraudService {
 
-    IndexStatusInfo readIndexStatus(IndexStatusInfo status);
+    @Override
+    public PaymentResponseDTO requestPayerAuthentication(PaymentRequestDTO paymentRequestDTO) {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
 
 }

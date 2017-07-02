@@ -96,8 +96,9 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             if (errorEntity != null) {
                 return errorEntity;
             }
-
+            
             adminInstance = dynamicEntityDao.merge(adminInstance);
+            // add doctor role to customer
             customerService.createRegisteredCustomerRoles(adminInstance, "ROLE_DOCTOR");
 
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);

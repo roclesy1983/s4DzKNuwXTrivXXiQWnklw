@@ -17,26 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
+package org.broadleafcommerce.core.payment.service;
+
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 
 /**
- * Responsible for reading and writing the status using one or more {@link org.broadleafcommerce.core.search.service.solr.SolrIndexStatusProvider}
- * instances. {@link #getSeedStatusInstance()} can be used to provide a custom {@link org.broadleafcommerce.core.search.service.solr.IndexStatusInfo}
- * implementation.
+ * This service provides a mechanism to calculate order payment status which
+ * is dynamically calculated based on the state of the containing transactions.
  *
- * @author Jeff Fischer
+ * @author Elbert Bautista (elbertbautista)
  */
-public interface SolrIndexStatusService {
+public interface OrderPaymentStatusService {
 
-    void setIndexStatus(IndexStatusInfo status);
-
-    IndexStatusInfo getIndexStatus();
-
-    /**
-     * Provide a custom IndexStatusInfo instance to be used by the system.
-     *
-     * @return
-     */
-    IndexStatusInfo getSeedStatusInstance();
+    public OrderPaymentStatus determineOrderPaymentStatus(OrderPayment orderPayment);
 
 }

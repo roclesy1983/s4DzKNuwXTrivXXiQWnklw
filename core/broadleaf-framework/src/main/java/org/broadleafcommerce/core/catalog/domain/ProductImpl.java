@@ -55,6 +55,7 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.common.web.Locatable;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -221,7 +222,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected Boolean canSellWithoutOptions = false;
-    
+
     @Column(name = "IS_SERVICE")
     @AdminPresentation(friendlyName = "ProductImpl_Is_Service",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
@@ -435,6 +436,11 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     public Money getSalePrice() {
         return getRetailPrice();
+    }
+
+    @Override
+    public Money getMargin() {
+        return getDefaultSku().getMargin();
     }
 
     @Override
@@ -1094,6 +1100,11 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     public String getLocation() {
         return getUrl();
+    }
+    
+    @Override
+    public FieldEntity getFieldEntityType() {
+        return FieldEntity.PRODUCT;
     }
 
 }

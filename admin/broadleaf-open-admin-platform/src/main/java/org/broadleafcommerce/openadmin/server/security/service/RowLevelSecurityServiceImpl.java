@@ -19,8 +19,10 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -40,12 +42,12 @@ import javax.persistence.criteria.Root;
 
 
 /**
- * 
- * 
+ * @see org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService
  * @author Phillip Verheyden (phillipuniverse)
+ * @author Jeff Fischer
  */
 @Service("blRowLevelSecurityService")
-public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
+public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, ExceptionAwareRowLevelSecurityProvider {
     
     private static final Log LOG = LogFactory.getLog(RowLevelSecurityServiceImpl.class);
     
@@ -86,9 +88,38 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
     }
 
     @Override
+    public EntityFormModifierConfiguration getUpdateDenialExceptions() {
+        EntityFormModifierConfiguration sum = new EntityFormModifierConfiguration();
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            if (provider instanceof ExceptionAwareRowLevelSecurityProvider) {
+                EntityFormModifierConfiguration response = ((ExceptionAwareRowLevelSecurityProvider) provider).getUpdateDenialExceptions();
+                if (response != null) {
+                    if (!CollectionUtils.isEmpty(response.getModifier())) {
+                        sum.getModifier().addAll(response.getModifier());
+                    }
+                    if (!CollectionUtils.isEmpty(response.getData())) {
+                        sum.getData().addAll(response.getData());
+                    }
+                }
+            }
+        }
+        return sum;
+    }
+
+    @Override
     public boolean canRemove(AdminUser currentUser, Entity entity) {
         for (RowLevelSecurityProvider provider : getProviders()) {
             if (!provider.canRemove(currentUser, entity)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean canAdd(AdminUser currentUser, String sectionClassName, ClassMetadata cmd) {
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            if (!provider.canAdd(currentUser, sectionClassName, cmd)) {
                 return false;
             }
         }
@@ -120,7 +151,21 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
         }
         return validationResult;
     }
-    
+
+    @Override
+    public GlobalValidationResult validateAddRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
+        GlobalValidationResult validationResult = new GlobalValidationResult(true);
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            GlobalValidationResult providerValidation = provider.validateAddRequest(currentUser, entity,
+                    persistencePackage);
+            if (providerValidation.isNotValid()) {
+                validationResult.setValid(false);
+                validationResult.addErrorMessage(providerValidation.getErrorMessage());
+            }
+        }
+        return validationResult;
+    }
+
     @Override
     public List<RowLevelSecurityProvider> getProviders() {
         return providers;

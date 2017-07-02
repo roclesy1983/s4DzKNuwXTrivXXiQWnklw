@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.payment.service;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.common.payment.service.PaymentGatewayClientTokenService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCreditCardService;
@@ -119,5 +120,11 @@ public class NullPaymentGatewayConfigurationServiceImpl implements PaymentGatewa
     public CreditCardTypesExtensionHandler getCreditCardTypesExtensionHandler() {
         return null;
     }
+
+	@Override
+	public PaymentGatewayClientTokenService getClientTokenService() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

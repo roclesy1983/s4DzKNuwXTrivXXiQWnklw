@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -95,16 +96,21 @@ public class SkuBundleItemImpl implements SkuBundleItem {
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal itemSalePrice;
 
-    @ManyToOne(targetEntity = ProductBundleImpl.class, optional = false, cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductBundleImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID", referencedColumnName = "PRODUCT_ID")
     protected ProductBundle bundle;
 
-    @ManyToOne(targetEntity = SkuImpl.class, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
     @AdminPresentation(friendlyName = "Sku", prominent = true, 
         order = 0, gridOrder = 0)
     @AdminPresentationToOneLookup()
     protected Sku sku;
+
+    /** The display order. */
+    @Column(name = "SEQUENCE", precision = 10, scale = 6)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    protected BigDecimal sequence;
 
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
@@ -192,7 +198,17 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     public void setSku(Sku sku) {
         this.sku = sku;
     }
-    
+
+    @Override
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    @Override
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
+
     @Override
     public void clearDynamicPrices() {
         dynamicPrices = null;
@@ -208,6 +224,7 @@ public class SkuBundleItemImpl implements SkuBundleItem {
         SkuBundleItem cloned = createResponse.getClone();
         cloned.setQuantity(quantity);
         cloned.setSalePrice(getSalePrice());
+        cloned.setSequence(sequence);
         if (sku != null) {
             cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
         }

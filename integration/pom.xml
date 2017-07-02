@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>4.0.11-SNAPSHOT</version>
+        <version>4.1.5-GA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>integration</artifactId>
@@ -49,13 +49,6 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-    <repositories>
-        <repository>
-            <id>maven central snapshots</id>
-            <name>maven central snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -72,7 +65,6 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>1.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -204,7 +196,7 @@
                                         -Xmx1024m
                                         -XX:MaxPermSize=512m -Xdebug
                                         -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
-                                        -javaagent:${jrebel.path}
+                                        -agentpath:${jrebel.path}
                                         -Drebel.log.stdout=true
                                         ${surefire.argLine}
                                     </argLine>
@@ -217,7 +209,7 @@
                                         -Xmx1024m
                                         -XX:MaxPermSize=512m -Xdebug
                                         -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
-                                        -javaagent:${jrebel.path}
+                                        -agentpath:${jrebel.path}
                                         -Drebel.log.stdout=true
                                         ${surefire.argLine}
                                     </argLine>

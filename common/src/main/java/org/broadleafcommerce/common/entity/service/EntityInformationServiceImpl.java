@@ -54,10 +54,24 @@ public class EntityInformationServiceImpl implements EntityInformationService {
     }
 
     @Override
+    public Site getParentSiteForProfile(Site profile) {
+        ExtensionResultHolder<Site> erh = new ExtensionResultHolder<Site>();
+        extensionManager.getProxy().getParentSiteForProfile(profile, erh);
+        return erh.getResult();
+    }
+
+    @Override
     public boolean getOkayToUseSiteDiscriminator(Object o) {
         ExtensionResultHolder<Boolean> erh = new ExtensionResultHolder<Boolean>();
         erh.setResult(Boolean.FALSE);
         extensionManager.getProxy().getOkayToUseSiteDiscriminator(o, erh);
+        return erh.getResult();
+    }
+
+    @Override
+    public Long getDefaultCatalogIdForSite(Site site) {
+        ExtensionResultHolder<Long> erh = new ExtensionResultHolder<Long>();
+        extensionManager.getProxy().getDefaultCatalogIdForSite(site, erh);
         return erh.getResult();
     }
 

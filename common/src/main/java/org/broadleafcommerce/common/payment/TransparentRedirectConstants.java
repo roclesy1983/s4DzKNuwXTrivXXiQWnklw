@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
@@ -17,34 +17,16 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
-
-import java.util.Date;
-import java.util.Map;
+package org.broadleafcommerce.common.payment;
 
 /**
- * General information about the current status of a (embedded) Solr instance's index
- *
- * @author Jeff Fischer
+ * @author Elbert Bautista (elbertbautista)
  */
-public interface IndexStatusInfo {
+public class TransparentRedirectConstants {
 
-    /**
-     * The most recent index date
-     *
-     * @return
-     */
-    Date getLastIndexDate();
-
-    void setLastIndexDate(Date lastIndexDate);
-
-    /**
-     * Arbitrary information about the index.
-     *
-     * @return
-     */
-    Map<String, String> getAdditionalInfo();
-
-    void setAdditionalInfo(Map<String, String> additionalInfo);
+    public static final String OVERRIDE_CREATE_TOKEN_RETURN_URL = "OVERRIDE_CREATE_TOKEN_RETURN_URL";
+    public static final String OVERRIDE_CREATE_TOKEN_CANCEL_URL = "OVERRIDE_CREATE_TOKEN_CANCEL_URL";
+    public static final String OVERRIDE_UPDATE_TOKEN_RETURN_URL = "OVERRIDE_UPDATE_TOKEN_RETURN_URL";
+    public static final String OVERRIDE_UPDATE_TOKEN_CANCEL_URL = "OVERRIDE_UPDATE_TOKEN_CANCEL_URL";
 
 }

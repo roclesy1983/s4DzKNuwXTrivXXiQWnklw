@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>4.0.11-SNAPSHOT</version>
+    <version>4.1.5-GA</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -48,7 +48,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.1.9.RELEASE</spring.version>
         <spring.security.version>3.2.9.RELEASE</spring.security.version>
-        <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
+        <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
         <geb.version>0.10.0</geb.version>
         <spock.core.version>1.0-groovy-2.3</spock.core.version>
@@ -61,7 +61,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>HEAD</tag>
+        <tag>broadleaf-4.1.5-GA</tag>
     </scm>
     <build>
         <pluginManagement>
@@ -334,11 +334,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/snapshots</url>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-snapshots</url>
         </snapshotRepository>
         <repository>
             <id>releases</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/releases</url>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-releases</url>
         </repository>
     </distributionManagement>
     <profiles>
@@ -426,11 +426,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>snapshots</id>
-                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/snapshots</url>
+                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-snapshots</url>
                 </snapshotRepository>
                 <repository>
                     <id>releases</id>
-                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/releases</url>
+                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-releases</url>
                 </repository>
             </distributionManagement>
             <build>
@@ -949,7 +949,7 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.10.3</version>
+                <version>5.3.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -964,7 +964,7 @@
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.10.3</version>
+                <version>5.3.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
