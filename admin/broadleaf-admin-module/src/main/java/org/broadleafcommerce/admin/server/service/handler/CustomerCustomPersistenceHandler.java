@@ -34,13 +34,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.profile.core.dao.RoleDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
-import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
-import org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +93,7 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             if (errorEntity != null) {
                 return errorEntity;
             }
-
+            
             adminInstance = dynamicEntityDao.merge(adminInstance);
             customerService.createRegisteredCustomerRoles(adminInstance, "ROLE_DOCTOR");
 

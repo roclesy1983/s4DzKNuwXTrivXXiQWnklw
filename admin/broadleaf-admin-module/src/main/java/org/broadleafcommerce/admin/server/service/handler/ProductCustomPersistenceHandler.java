@@ -39,8 +39,6 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
-import org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -66,15 +64,12 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
-import org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,13 +88,13 @@ import javax.persistence.criteria.Root;
  */
 @Component("blProductCustomPersistenceHandler")
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-
+    
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-    
+
     @Value("${use.email.for.site.login:true}")
     protected boolean useEmailForLogin;
 
@@ -250,70 +245,45 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                             })
                     ));
         }
-        if (ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs()) &&
-                (!cto.getCriteriaMap().containsKey("id") || CollectionUtils.isEmpty(cto.getCriteriaMap().get("id").getFilterValues()))) {
-            //Add special handling for product list grid fetches
-            boolean hasExplicitSort = false;
-            for (FilterAndSortCriteria filter : cto.getCriteriaMap().values()) {
-                hasExplicitSort = filter.getSortDirection() != null;
-                if (hasExplicitSort) {
-                    break;
-                }
-            }
-            if (!hasExplicitSort) {
-                FilterAndSortCriteria filter = cto.get("id");
-                filter.setNullsLast(false);
-                filter.setSortAscending(true);
-            }
-            try {
-                extensionManager.getProxy().initiateFetchState();
-                return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-            } finally {
-                extensionManager.getProxy().endFetchState();
-            }
-        } else {
-            return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
-        }
+        return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
     }
 
     @Override
-	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-		Entity entity = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity  = persistencePackage.getEntity();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
 
-			if (adminInstance instanceof ProductBundle) {
-				removeBundleFieldRestrictions((ProductBundle) adminInstance, adminProperties, entity);
-			}
+            if (adminInstance instanceof ProductBundle) {
+                removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
+            }
+            
+            adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            adminInstance = dynamicEntityDao.merge(adminInstance);
+            boolean handled = false;
+            if (extensionManager != null) {
+                ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForAdd(persistencePackage, adminInstance);
+                handled = ExtensionResultStatusType.NOT_HANDLED != result;
+            }
+            if (!handled) {
+                setupXref(adminInstance);
+            }
+            
+            //Since none of the Sku fields are required, it's possible that the user did not fill out
+            //any Sku fields, and thus a Sku would not be created. Product still needs a default Sku so instantiate one
+            if (adminInstance.getDefaultSku() == null) {
+                Sku newSku = catalogService.createSku();
+                dynamicEntityDao.persist(newSku);
+                adminInstance.setDefaultSku(newSku);
+                adminInstance = dynamicEntityDao.merge(adminInstance);
+            }
 
-			adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-			adminInstance = dynamicEntityDao.merge(adminInstance);
-			boolean handled = false;
-			if (extensionManager != null) {
-				ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForAdd(persistencePackage, adminInstance);
-				handled = ExtensionResultStatusType.NOT_HANDLED != result;
-			}
-			if (!handled) {
-				setupXref(adminInstance);
-			}
-
-			// Since none of the Sku fields are required, it's possible that the
-			// user did not fill out
-			// any Sku fields, and thus a Sku would not be created. Product
-			// still needs a default Sku so instantiate one
-			if (adminInstance.getDefaultSku() == null) {
-				Sku newSku = catalogService.createSku();
-				dynamicEntityDao.persist(newSku);
-				adminInstance.setDefaultSku(newSku);
-				adminInstance = dynamicEntityDao.merge(adminInstance);
-			}
-
-			// also set the default product for the Sku
-			adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
-			dynamicEntityDao.merge(adminInstance.getDefaultSku());
-
+            //also set the default product for the Sku
+            adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
+            dynamicEntityDao.merge(adminInstance.getDefaultSku());
+            
 			Customer adminCustomerInstance = (Customer) Class.forName("org.broadleafcommerce.profile.core.domain.CustomerImpl").newInstance();
 			String attributeLinkProductCustomer = new String();
 			if (useEmailForLogin) {
@@ -333,9 +303,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 			customerService.createRegisteredCustomerRoles(adminCustomerInstance, "ROLE_DOCTOR");
 			catalogService.saveProductCustomerXref(adminInstance, adminCustomerInstance);
 
-			return helper.getRecord(adminProperties, adminInstance, null, null);
-		} catch (Exception e) {
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+            return helper.getRecord(adminProperties, adminInstance, null, null);
+        } catch (Exception e) {
+            throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
     }
 

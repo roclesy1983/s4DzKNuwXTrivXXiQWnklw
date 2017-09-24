@@ -19,18 +19,13 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -85,6 +80,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -160,8 +162,7 @@ public class OrderServiceImpl implements OrderService {
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
 
-    @Value("${automatically.merge.like.items}")
-    protected boolean automaticallyMergeLikeItems;
+    protected Boolean automaticallyMergeLikeItems;
 
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
@@ -230,7 +231,7 @@ public class OrderServiceImpl implements OrderService {
     public Order findOrderByOrderNumber(String orderNumber) {
         return orderDao.readOrderByOrderNumber(orderNumber);
     }
-    
+
     @Override
     public List<Order> findOrdersByProductId(Long productId) {
 		List<DiscreteOrderItem> discreteOrderItems = discreteOrderItemDao.readDiscreteOrderItemsByProductId(productId);
@@ -367,7 +368,7 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(Order order) {
         orderDao.delete(order);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public Order cancelOrderByDoctor(Order order) {
@@ -468,7 +469,7 @@ public class OrderServiceImpl implements OrderService {
         }
         return null;
     }
-   
+    
     @Override
     @Transactional("blTransactionManager")
     public Order completeOrder(Order order) {
@@ -586,13 +587,13 @@ public class OrderServiceImpl implements OrderService {
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
         Order order = findOrderById(orderId);
         preValidateCartOperation(order);
-        if (automaticallyMergeLikeItems) {
+        if (getAutomaticallyMergeLikeItems()) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
             if (item != null) {
 				if (((DiscreteOrderItem) item).getProduct().getIsService()) {
 					orderItemRequestDTO.setQuantity(item.getQuantity());
 				} else {
-					orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
+                orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
 				}
                 orderItemRequestDTO.setOrderItemId(item.getId());
                 try {
@@ -637,13 +638,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
-		Order order = findOrderById(orderId);
-		preValidateCartOperation(order);
-		preValidateUpdateQuantityOperation(order, orderItemRequestDTO);
-		if (orderItemRequestDTO.getQuantity() == 0) {
-			return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);			
-		}
-
+        Order order = findOrderById(orderId);
+        preValidateCartOperation(order);
+        preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
+        if (orderItemRequestDTO.getQuantity() == 0) {
+            return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
+        }
+        
 		for (OrderItem currentItem : order.getOrderItems()) {
 			if (currentItem instanceof DiscreteOrderItem) {
 				DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
@@ -656,14 +657,14 @@ public class OrderServiceImpl implements OrderService {
 			}
 		}
 
-		try {
-			CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-			ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
-			context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
-			return context.getSeedData().getOrder();
-		} catch (WorkflowException e) {
-			throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
-		}
+        try {
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
+            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+            return context.getSeedData().getOrder();
+        } catch (WorkflowException e) {
+            throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
+        }
     }
 
     @Override
@@ -732,7 +733,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean getAutomaticallyMergeLikeItems() {
-        return automaticallyMergeLikeItems;
+        
+        if (automaticallyMergeLikeItems != null) {
+            return automaticallyMergeLikeItems;
+        }
+
+        return BLCSystemProperty.resolveBooleanSystemProperty("automatically.merge.like.items", true);
     }
 
     @Override
@@ -835,7 +841,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * Returns true if the two items attributes exactly match.
-     * @param item1
+     * @param item1Attributes
      * @param item2
      * @return
      */
@@ -986,5 +992,30 @@ public class OrderServiceImpl implements OrderService {
         } else if (erh.getThrowable() != null) {
             throw new RuntimeException(erh.getThrowable());
         }
+    }
+
+    @Override
+    public void refresh(Order order) {
+        orderDao.refresh(order);
+    }
+
+    @Override
+    public Order findCartForCustomerWithEnhancements(Customer customer) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, erh);
+        if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
+            return erh.getResult();
+        }
+        return findCartForCustomer(customer);
+    }
+
+    @Override
+    public Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, candidateOrder, erh);
+        if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
+            return erh.getResult();
+        }
+        return candidateOrder;
     }
 }

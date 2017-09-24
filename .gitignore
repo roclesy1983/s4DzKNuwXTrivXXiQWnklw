@@ -49,5 +49,6 @@ Temporary Items
 
 .project
 /bin/
+/target/
 *.DS_Store
 *.gitignore
