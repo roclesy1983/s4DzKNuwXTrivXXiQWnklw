@@ -299,10 +299,10 @@ public interface OrderService {
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
     
     /**
-     * Changes the OrderStatus to SUBMITTED
+     * Changes the OrderStatus to COMPLETE
      * 
-     * @param order to confirm
-     * @return the order that was confirmed
+     * @param order to complete
+     * @return the order that was completed
      */
     public Order completeOrder(Order order);
 

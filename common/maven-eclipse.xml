@@ -1,8 +1,0 @@
-<project default="copy-resources">
-  <target name="init"/>
-  <target name="copy-resources" depends="init">
-    <copy todir="target/classes/common_style/js" filtering="false">
-      <fileset dir="src/main/resources/common_style/js" includes="" excludes="**/*.java"/>
-    </copy>
-  </target>
-</project>

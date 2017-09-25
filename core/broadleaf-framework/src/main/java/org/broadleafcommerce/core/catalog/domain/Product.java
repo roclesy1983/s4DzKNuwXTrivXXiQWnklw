@@ -228,8 +228,26 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      */
     public void setCanSellWithoutOptions(Boolean canSellWithoutOptions);
 
+    /**
+     * Returns a boolean that indicates if the product is service.
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return a boolean indicates if the product is service.
+     */
     public Boolean getIsService();
     
+    /**
+     * Sets a boolean that indicates if the product is service.
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param isService - a boolean indicates if the product is service
+     */
 	public void setIsService(Boolean isService);
 	
     /**

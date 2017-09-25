@@ -283,26 +283,26 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             //also set the default product for the Sku
             adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
             dynamicEntityDao.merge(adminInstance.getDefaultSku());
-            
-			Customer adminCustomerInstance = (Customer) Class.forName("org.broadleafcommerce.profile.core.domain.CustomerImpl").newInstance();
-			String attributeLinkProductCustomer = new String();
-			if (useEmailForLogin) {
-				attributeLinkProductCustomer = adminInstance.getUrl().replace("/", ".") + "@medidoc.com";
-			} else {
-				attributeLinkProductCustomer = adminInstance.getUrl().replace("/", ".");
-			}
-			adminCustomerInstance.setId(customerService.findNextCustomerId());
-			adminCustomerInstance.setEmailAddress(adminInstance.getUrl().replace("/", ".") + "@medidoc.com");
-			adminCustomerInstance.setUsername(attributeLinkProductCustomer);
-			adminCustomerInstance.setFirstName(adminInstance.getName());
-			adminCustomerInstance.setLastName(adminInstance.getCategory().getName());
-			adminCustomerInstance.setRegistered(false);
-			adminCustomerInstance.setReceiveEmail(false);
-			adminCustomerInstance.setDeactivated(true);
-			adminCustomerInstance = customerService.saveCustomer(adminCustomerInstance);
-			customerService.createRegisteredCustomerRoles(adminCustomerInstance, "ROLE_DOCTOR");
-			catalogService.saveProductCustomerXref(adminInstance, adminCustomerInstance);
-
+            if(adminInstance.getIsService()){
+				Customer adminCustomerInstance = (Customer) Class.forName("org.broadleafcommerce.profile.core.domain.CustomerImpl").newInstance();
+				String attributeLinkProductCustomer = new String();
+				if (useEmailForLogin) {
+					attributeLinkProductCustomer = adminInstance.getUrl().replace("/", ".") + "@medidoc.com";
+				} else {
+					attributeLinkProductCustomer = adminInstance.getUrl().replace("/", ".");
+				}
+				adminCustomerInstance.setId(customerService.findNextCustomerId());
+				adminCustomerInstance.setEmailAddress(adminInstance.getUrl().replace("/", ".") + "@medidoc.com");
+				adminCustomerInstance.setUsername(attributeLinkProductCustomer);
+				adminCustomerInstance.setFirstName(adminInstance.getName());
+				adminCustomerInstance.setLastName(adminInstance.getCategory().getName());
+				adminCustomerInstance.setRegistered(false);
+				adminCustomerInstance.setReceiveEmail(false);
+				adminCustomerInstance.setDeactivated(true);
+				adminCustomerInstance = customerService.saveCustomer(adminCustomerInstance);
+				customerService.createRegisteredCustomerRoles(adminCustomerInstance, "ROLE_DOCTOR");
+				catalogService.saveProductCustomerXref(adminInstance, adminCustomerInstance);
+            }
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
