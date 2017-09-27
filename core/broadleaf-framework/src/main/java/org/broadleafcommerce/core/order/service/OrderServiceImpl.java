@@ -595,13 +595,26 @@ public class OrderServiceImpl implements OrderService {
 				} else {
                 orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
 				}
-                orderItemRequestDTO.setOrderItemId(item.getId());
+				orderItemRequestDTO.setOrderItemId(item.getId());
                 try {
                     return updateItemQuantity(orderId, orderItemRequestDTO, priceOrder);
                 } catch (RemoveFromCartException e) {
                     throw new AddToCartException("Unexpected error - system tried to remove item while adding to cart", e);
                 } catch (UpdateCartException e) {
                     throw new AddToCartException("Could not update quantity for matched item", e);
+                }
+            }
+        }
+        for (OrderItem currentItem : order.getOrderItems()) {
+            if (currentItem instanceof DiscreteOrderItem) {
+                DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
+                if (discreteItem.getProduct().getIsService() && discreteItem.getProduct().getId().equals(orderItemRequestDTO.getProductId())) {
+                    try {
+						removeItem(orderId, discreteItem.getId(), priceOrder);
+						break;
+					} catch (RemoveFromCartException e) {
+						throw new AddToCartException("Unexpected error - system tried to remove item while adding to cart", e);
+					}
                 }
             }
         }
@@ -873,7 +886,7 @@ public class OrderServiceImpl implements OrderService {
         } else {
             if (item1Product != null && item2.getProductId() != null) {
                 if (item1Product.getId().equals(item2.getProductId())) {
-					return item1Product.getIsService() ? true : compareAttributes(item1Attributes, item2);
+					return compareAttributes(item1Attributes, item2);
                 }
             }
         }
