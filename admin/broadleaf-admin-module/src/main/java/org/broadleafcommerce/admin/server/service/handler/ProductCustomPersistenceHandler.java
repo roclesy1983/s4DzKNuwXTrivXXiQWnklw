@@ -283,7 +283,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             //also set the default product for the Sku
             adminInstance.getDefaultSku().setDefaultProduct(adminInstance);
             dynamicEntityDao.merge(adminInstance.getDefaultSku());
-            if(adminInstance.getIsService()){
+            if(adminInstance.getProSerSeg() == 1){
 				Customer adminCustomerInstance = (Customer) Class.forName("org.broadleafcommerce.profile.core.domain.CustomerImpl").newInstance();
 				String attributeLinkProductCustomer = new String();
 				if (useEmailForLogin) {

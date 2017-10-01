@@ -590,7 +590,7 @@ public class OrderServiceImpl implements OrderService {
         if (getAutomaticallyMergeLikeItems()) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
             if (item != null) {
-				if (((DiscreteOrderItem) item).getProduct().getIsService()) {
+				if (((DiscreteOrderItem) item).getProduct().getProSerSeg() == 1) {
 					orderItemRequestDTO.setQuantity(item.getQuantity());
 				} else {
                 orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
@@ -608,7 +608,7 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItem currentItem : order.getOrderItems()) {
             if (currentItem instanceof DiscreteOrderItem) {
                 DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
-                if (discreteItem.getProduct().getIsService() && discreteItem.getProduct().getId().equals(orderItemRequestDTO.getProductId())) {
+                if (discreteItem.getProduct().getProSerSeg() == 1) {
                     try {
 						removeItem(orderId, discreteItem.getId(), priceOrder);
 						break;
@@ -661,7 +661,7 @@ public class OrderServiceImpl implements OrderService {
 		for (OrderItem currentItem : order.getOrderItems()) {
 			if (currentItem instanceof DiscreteOrderItem) {
 				DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
-				if (discreteItem.getProduct().getIsService()) {
+				if (discreteItem.getProduct().getProSerSeg() == 1) {
 					for (Map.Entry<String, OrderItemAttribute> entry : discreteItem.getOrderItemAttributes().entrySet()) {
 						String optionValue = orderItemRequestDTO.getItemAttributes().get(entry.getKey());
 						entry.getValue().setValue(optionValue);

@@ -237,7 +237,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * 
      * @return a boolean indicates if the product is service.
      */
-    public Boolean getIsService();
+    public int getProSerSeg();
     
     /**
      * Sets a boolean that indicates if the product is service.
@@ -246,9 +246,9 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
      * 
-     * @param isService - a boolean indicates if the product is service
+     * @param proSerSeg - a boolean indicates if the product is service
      */
-	public void setIsService(Boolean isService);
+	public void setProSerSeg(int proSerSeg);
 	
     /**
      * Returns a list of {@link Sku}s filtered by whether the Skus are active or not.

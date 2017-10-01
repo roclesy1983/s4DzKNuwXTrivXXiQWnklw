@@ -222,11 +222,11 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
             group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected Boolean canSellWithoutOptions = false;
     
-    @Column(name = "IS_SERVICE")
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Service",
+    @Column(name = "PROSER_SEG")
+    @AdminPresentation(friendlyName = "ProductImpl_ProSer_Seg",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
-    protected Boolean isService = false;
+    protected int proSerSeg = 0;
 
     @Transient
     protected List<Sku> skus = new ArrayList<Sku>();
@@ -453,13 +453,13 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     }
 
     @Override
-    public Boolean getIsService() {
-		return isService;
+    public int getProSerSeg() {
+		return proSerSeg;
 	}
 
     @Override
-	public void setIsService(Boolean isService) {
-		this.isService = isService;
+	public void setProSerSeg(int proSerSeg) {
+		this.proSerSeg = proSerSeg;
 	}
 
 	@Override

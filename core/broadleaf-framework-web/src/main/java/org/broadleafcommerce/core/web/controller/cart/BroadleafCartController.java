@@ -34,6 +34,7 @@ import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.controller.checkout.BroadleafCheckoutControllerExtensionManager;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +46,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,6 +62,10 @@ public class BroadleafCartController extends AbstractCartController {
     
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
+    
+    /* Extension Managers */
+    @Resource(name = "blCheckoutControllerExtensionManager")
+    protected BroadleafCheckoutControllerExtensionManager checkoutControllerExtensionManager;
     
 
     /**
@@ -103,17 +109,35 @@ public class BroadleafCartController extends AbstractCartController {
         
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
         // and provision a fresh cart for the current customer upon the first cart add
-        if (cart == null || cart instanceof NullOrderImpl) {
-            cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
-        }
+		if (cart == null || cart instanceof NullOrderImpl) {
+			cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
+		}
 
-        updateCartService.validateCart(cart);
+		updateCartService.validateCart(cart);
 
-        cart = orderService.addItem(cart.getId(), itemRequest, false);
-        cart = orderService.save(cart,  true);
-        
-        return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
-    }
+		cart = orderService.addItem(cart.getId(), itemRequest, false);
+		cart = orderService.save(cart, true);
+
+		String viewPage = "";
+
+		if (cart.getDiscreteOrderItems().get(0).getProduct().getProSerSeg() == 1) {
+			try {
+				orderService.preValidateCartOperation(cart);
+			} catch (IllegalCartOperationException ex) {
+				model.addAttribute("cartRequiresLock", true);
+			}
+
+			if (!(cart instanceof NullOrderImpl)) {
+				model.addAttribute("paymentRequestDTO", dtoTranslationService.translateOrder(cart));
+			}
+			populateModelWithReferenceData(request, model);
+			viewPage = "redirect:/checkout";
+		} else {
+			viewPage = isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+		}
+
+		return viewPage;
+	}
     
     /**
      * Takes in an item request, adds the item to the customer's current cart, and returns.
@@ -332,6 +356,11 @@ public class BroadleafCartController extends AbstractCartController {
         returnMap.put("error", "illegalCartOperation");
         returnMap.put("exception", BLCMessageUtils.getMessage(ex.getType()));
         return returnMap;
+    }
+    
+    protected void populateModelWithReferenceData(HttpServletRequest request, Model model) {
+        //Add module specific model variables
+        checkoutControllerExtensionManager.getProxy().addAdditionalModelVariables(model);
     }
     
 
