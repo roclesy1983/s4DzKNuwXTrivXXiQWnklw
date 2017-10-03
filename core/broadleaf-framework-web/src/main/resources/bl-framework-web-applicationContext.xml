@@ -66,6 +66,7 @@
     <bean id="blHeadProcessorExtensionManager" class="org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionManager" />
     <bean id="blOnePageCheckoutProcessor" class="org.broadleafcommerce.core.web.processor.OnePageCheckoutProcessor"/>
     <bean id="blUncacheableDataProcessor" class="org.broadleafcommerce.core.web.processor.UncacheableDataProcessor"/>
+    <bean id="mdSearchFacetTreeDisplayProcessor" class="org.broadleafcommerce.core.web.processor.SearchFacetTreeDisplayProcessor" />
     <bean id="blGoogleUniversalAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleUniversalAnalyticsProcessor" />
     <bean id="blCatalogRelativeHrefProcessor" class="org.broadleafcommerce.core.web.processor.CatalogRelativeHrefProcessor" />
 
@@ -93,6 +94,7 @@
                 <ref bean="blTransparentRedirectCreditCardFormProcessor" />
                 <ref bean="blCreditCardTypesProcessor" />
                 <ref bean="blUncacheableDataProcessor" />
+                <ref bean="mdSearchFacetTreeDisplayProcessor" />
                 <ref bean="blGoogleUniversalAnalyticsProcessor" />
                 <ref bean="blCatalogRelativeHrefProcessor" />
                 

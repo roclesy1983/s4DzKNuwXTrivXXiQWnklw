@@ -38,6 +38,7 @@
     <element-processor name="ratings" class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
     <element-processor name="related_products" class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
     <element-processor name="uncacheabledata" class="org.broadleafcommerce.core.web.processor.UncacheableDataProcessor" />
+    <element-processor name="search_facet_tree_display" class="org.broadleafcommerce.core.web.processor.SearchFacetTreeDisplayProcessor" />
     
     <!-- Attribute processors -->
     <attribute-processor name="addsortlink" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
