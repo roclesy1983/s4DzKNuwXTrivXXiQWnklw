@@ -64,7 +64,7 @@ public class SearchFacetTreeDisplayProcessor extends AbstractLocalVariableDefini
 		if (facetDto instanceof SearchFacetDTO) {
 			SearchFacetDTO searchFacetDto = (SearchFacetDTO) facetDto;
 			for (SearchFacetResultDTO facetValue : searchFacetDto.getFacetValues()) {
-				String[] areas = facetValue.getValue().split(",");
+				String[] areas = facetValue.getValue().split(", ");
 				for (int i = 0; i <= areas.length - 1; i++) {
 					boolean hasChildren = false;
 					SearchFacetTreeResultDTO tempTreeNode = new SearchFacetTreeResultDTO();
